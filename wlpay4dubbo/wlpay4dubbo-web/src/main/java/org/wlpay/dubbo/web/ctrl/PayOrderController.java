@@ -2,15 +2,25 @@ package org.wlpay.dubbo.web.ctrl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+
+import cn.hutool.core.date.DateUtil;
+
+import java.util.Date;
+import java.util.Map;
+import java.util.Objects;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.wlpay.common.constant.PayConstant;
 import org.wlpay.common.util.MyLog;
 import org.wlpay.common.util.MySeq;
+import org.wlpay.common.util.PayDigestUtil;
 import org.wlpay.common.util.XXPayUtil;
 import org.wlpay.dubbo.web.service.MchInfoService;
 import org.wlpay.dubbo.web.service.PayChannelService;
@@ -23,7 +33,7 @@ import org.wlpay.dubbo.web.service.PayOrderService;
  * @version V1.0
  * @Copyright: www.xxpay.org
  */
-@RestController
+@Controller
 public class PayOrderController {
 
     private final MyLog _log = MyLog.getLog(PayOrderController.class);
@@ -47,6 +57,7 @@ public class PayOrderController {
      * @return
      */
     @RequestMapping(value = "/api/pay/create_order")
+    @ResponseBody
     public String payOrder(@RequestParam String params) {
         _log.info("###### 开始接收商户统一下单请求 ######");
         String logPrefix = "【商户统一下单】";
@@ -62,6 +73,7 @@ public class PayOrderController {
             }
             if (object instanceof JSONObject) payOrder = (JSONObject) object;
             if(payOrder == null) return XXPayUtil.makeRetFail(XXPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL, "支付中心下单失败", null, null));
+            payOrder.put("expireTime", DateUtil.offsetMinute(new Date(), 5).getTime());
             int result = payOrderService.create(payOrder);
             _log.info("{}创建支付订单,结果:{}", logPrefix, result);
             if(result != 1) {
@@ -95,6 +107,21 @@ public class PayOrderController {
             return XXPayUtil.makeRetFail(XXPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL, "支付中心系统异常", null, null));
         }
     }
+    
+    
+    @RequestMapping("pay/create_order")
+    public String payOrderWeb(@RequestParam String params) {
+    	String result=payOrder(params);
+    	Map retMap = JSON.parseObject(result);
+        if("SUCCESS".equals(retMap.get("retCode"))) {
+            // 验签
+        	String payUrl=Objects.toString(retMap.get("payUrl"));
+        	
+        	
+        }
+    	return null;
+    }
+    
 
     /**
      * 验证创建订单请求参数,参数通过返回JSONObject对象,否则返回错误文本信息

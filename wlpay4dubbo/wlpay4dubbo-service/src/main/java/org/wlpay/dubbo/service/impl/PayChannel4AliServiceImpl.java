@@ -12,6 +12,9 @@ import com.alipay.api.response.AlipayFundTransOrderQueryResponse;
 import com.alipay.api.response.AlipayFundTransToaccountTransferResponse;
 import com.alipay.api.response.AlipayTradeFastpayRefundQueryResponse;
 import com.alipay.api.response.AlipayTradeRefundResponse;
+
+import cn.hutool.core.date.DateUtil;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +33,7 @@ import org.wlpay.dubbo.service.BaseService4RefundOrder;
 import org.wlpay.dubbo.service.BaseService4TransOrder;
 import org.wlpay.dubbo.service.channel.alipay.AlipayConfig;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -116,7 +120,6 @@ public class PayChannel4AliServiceImpl implements IPayChannel4AliService {
         map.put("payUrl", payUrl);
         return RpcUtil.createBizResult(baseParam, map);
     }
-
     
     @Override
 	public Map doAlipayIndividualReq(String jsonParam) {
@@ -141,6 +144,8 @@ public class PayChannel4AliServiceImpl implements IPayChannel4AliService {
         Map<String, Object> map = XXPayUtil.makeRetMap(PayConstant.RETURN_VALUE_SUCCESS, "", PayConstant.RETURN_VALUE_SUCCESS, null);
         map.put("payOrderId", payOrderId);
         map.put("payUrl", payUrl);
+        PayOrder order=baseService4PayOrder.baseSelectPayOrder(payOrderId);
+        map.put("expireTime", DateUtil.formatDateTime(new Date(order.getExpireTime())));
         return RpcUtil.createBizResult(baseParam, map);
 	}
 

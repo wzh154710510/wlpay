@@ -141,7 +141,7 @@ public class GoodsOrderController {
         paramMap.put("notifyUrl", notifyUrl);         // 回调URL
         paramMap.put("param1", "");                         // 扩展参数1
         paramMap.put("param2", "");                         // 扩展参数2
-
+        
         JSONObject extra = new JSONObject();
         extra.put("openId", params.get("openId"));
         paramMap.put("extra", extra.toJSONString());  // 附加参数
