@@ -311,7 +311,7 @@
       UpdateTime = #{updateTime,jdbcType=TIMESTAMP}
     where OrderId = #{orderId,jdbcType=VARCHAR}
   </update>
-
+  
   <!-- 单独增加的方法 -->
   <insert id="insertSelectiveOnDuplicateKeyUpdate" parameterType="org.wlpay.dal.dao.model.MchNotify" >
     insert into t_mch_notify

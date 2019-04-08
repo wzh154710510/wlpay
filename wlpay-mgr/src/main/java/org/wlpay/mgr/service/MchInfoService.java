@@ -4,6 +4,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.wlpay.common.domain.RespResult;
+import org.wlpay.common.util.JWTUtil;
+import org.wlpay.common.vo.MchAuthentication;
 import org.wlpay.dal.dao.mapper.MchInfoMapper;
 import org.wlpay.dal.dao.model.MchInfo;
 import org.wlpay.dal.dao.model.MchInfoExample;
@@ -64,5 +67,22 @@ public class MchInfoService {
             if(mchInfo.getType() != null && !"-99".equals(mchInfo.getType())) criteria.andTypeEqualTo(mchInfo.getType());
         }
     }
+
+	public RespResult<Object> login(String username, String password) {
+		MchInfoExample example = new MchInfoExample();
+		example.createCriteria().andUsernameEqualTo(username).andPasswordEqualTo(password);
+		List<MchInfo> mchInfos= mchInfoMapper.selectByExample(example);
+		if(org.apache.commons.collections.CollectionUtils.isEmpty(mchInfos)) {
+			return RespResult.buildErrorMessage("登录失败，用户名或密码错误");
+		}
+		MchInfo mchInfo=mchInfos.get(0);
+		MchAuthentication mchAuthentication=new MchAuthentication();
+		mchAuthentication.setEmail(mchInfo.getEmail());
+		mchAuthentication.setMchId(mchInfo.getMchId());
+		mchAuthentication.setName(mchInfo.getName());
+		mchAuthentication.setPhone(mchInfo.getPhone());
+		mchAuthentication.setToken(JWTUtil.createJWT(mchInfo.getMchId()));
+		return RespResult.buildSuccessMessage(mchAuthentication);
+	}
 
 }

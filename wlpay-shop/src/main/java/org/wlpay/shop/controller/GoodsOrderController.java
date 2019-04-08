@@ -37,7 +37,7 @@ public class GoodsOrderController {
     @Autowired
     private GoodsOrderService goodsOrderService;
 
-    static final String mchId = "20001223";
+    static final String mchId = "20001224";
     // 加签key
     static final String reqKey = "M86l522AV6q613Ii4W6u8K48uW8vM1N6bFgyv769220MdYe9u37N4y7rI5mQ";
     // 验签key
@@ -85,7 +85,7 @@ public class GoodsOrderController {
         JSONObject paramMap = new JSONObject();
         paramMap.put("mchId", mchId);                       // 商户ID
         paramMap.put("mchOrderNo", goodsOrderId);           // 商户订单号
-        paramMap.put("channelId", "ALIPAY_WAP");             // 支付渠道ID, WX_NATIVE,ALIPAY_WAP
+        paramMap.put("channelId", "ALIPAY_INDIVIDUAL");             // 支付渠道ID, WX_NATIVE,ALIPAY_WAP
         paramMap.put("amount", goodsOrder.getAmount());                          // 支付金额,单位分
         paramMap.put("currency", "cny");                    // 币种, cny-人民币
         paramMap.put("clientIp", "114.112.124.236");        // 用户地址,IP或手机号

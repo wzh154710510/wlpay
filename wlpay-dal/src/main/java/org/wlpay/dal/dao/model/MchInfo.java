@@ -60,6 +60,34 @@ public class MchInfo implements Serializable {
      */
     private Date updateTime;
 
+    /**
+     * 用户名
+     *
+     * @mbggenerated
+     */
+    private String username;
+
+    /**
+     * 密码
+     *
+     * @mbggenerated
+     */
+    private String password;
+
+    /**
+     * 手机号
+     *
+     * @mbggenerated
+     */
+    private String phone;
+
+    /**
+     * 邮箱
+     *
+     * @mbggenerated
+     */
+    private String email;
+
     private static final long serialVersionUID = 1L;
 
     public String getMchId() {
@@ -126,6 +154,38 @@ public class MchInfo implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -140,6 +200,10 @@ public class MchInfo implements Serializable {
         sb.append(", state=").append(state);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
+        sb.append(", username=").append(username);
+        sb.append(", password=").append(password);
+        sb.append(", phone=").append(phone);
+        sb.append(", email=").append(email);
         sb.append("]");
         return sb.toString();
     }
@@ -163,7 +227,11 @@ public class MchInfo implements Serializable {
             && (this.getResKey() == null ? other.getResKey() == null : this.getResKey().equals(other.getResKey()))
             && (this.getState() == null ? other.getState() == null : this.getState().equals(other.getState()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
-            && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()));
+            && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
+            && (this.getUsername() == null ? other.getUsername() == null : this.getUsername().equals(other.getUsername()))
+            && (this.getPassword() == null ? other.getPassword() == null : this.getPassword().equals(other.getPassword()))
+            && (this.getPhone() == null ? other.getPhone() == null : this.getPhone().equals(other.getPhone()))
+            && (this.getEmail() == null ? other.getEmail() == null : this.getEmail().equals(other.getEmail()));
     }
 
     @Override
@@ -178,6 +246,10 @@ public class MchInfo implements Serializable {
         result = prime * result + ((getState() == null) ? 0 : getState().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
+        result = prime * result + ((getUsername() == null) ? 0 : getUsername().hashCode());
+        result = prime * result + ((getPassword() == null) ? 0 : getPassword().hashCode());
+        result = prime * result + ((getPhone() == null) ? 0 : getPhone().hashCode());
+        result = prime * result + ((getEmail() == null) ? 0 : getEmail().hashCode());
         return result;
     }
 }

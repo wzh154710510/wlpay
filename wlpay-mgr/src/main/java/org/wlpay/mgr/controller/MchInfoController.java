@@ -76,6 +76,10 @@ public class MchInfoController {
         mchInfo.setState((byte) ("on".equalsIgnoreCase(po.getString("state")) ? 1 : 0));
         mchInfo.setReqKey(po.getString("reqKey"));
         mchInfo.setResKey(po.getString("resKey"));
+        mchInfo.setUsername(po.getString("username"));
+        mchInfo.setPassword(po.getString("password"));
+        mchInfo.setPhone(po.getString("phone"));
+        mchInfo.setEmail(po.getString("email"));
         int result;
         if(StringUtils.isBlank(mchId)) {
             // 添加

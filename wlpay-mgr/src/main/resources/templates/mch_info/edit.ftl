@@ -14,6 +14,35 @@
 				<input type="text" name="name" lay-verify="required" placeholder="请输入商户名称" autocomplete="off" class="layui-input" value="${item.name?if_exists }">
 			</div>
 		</div>
+		
+		<div class="layui-form-item">
+			<label class="layui-form-label">商户账号</label>
+			<div class="layui-input-block">
+				<input type="text" name="username" lay-verify="required" placeholder="请输入商户账号" autocomplete="off" class="layui-input" value="${item.username?if_exists }">
+			</div>
+		</div>
+		
+		<div class="layui-form-item">
+			<label class="layui-form-label">商户密码</label>
+			<div class="layui-input-block">
+				<input type="text" name="password" lay-verify="required" placeholder="请输入商户密码" autocomplete="off" class="layui-input" value="${item.password?if_exists }">
+			</div>
+		</div>
+		
+		<div class="layui-form-item">
+			<label class="layui-form-label">商户手机号</label>
+			<div class="layui-input-block">
+				<input type="text" name="phone" lay-verify="required" placeholder="请输入商户手机号" autocomplete="off" class="layui-input" value="${item.phone?if_exists }">
+			</div>
+		</div>
+		
+		<div class="layui-form-item">
+			<label class="layui-form-label">商户邮箱</label>
+			<div class="layui-input-block">
+				<input type="text" name="email" lay-verify="required" placeholder="请输入商户邮箱"   autocomplete="off" class="layui-input" value="${item.email?if_exists }">
+			</div>
+		</div>
+		
 		<div class="layui-form-item">
 			<label class="layui-form-label">商户类型</label>
 			<div class="layui-input-block">

@@ -6,8 +6,8 @@ spring:
     application:
       name: xxpay4dubbo-web
     registry:
-      address: zookeeper://127.0.0.1:2181
-    scan: org.xxpay.dubbo
+      address: zookeeper://47.106.118.9:2181
+    scan: org.wlpay.dubbo
 
 logging:
   file: ./log/xxpay4dubbo-web.log

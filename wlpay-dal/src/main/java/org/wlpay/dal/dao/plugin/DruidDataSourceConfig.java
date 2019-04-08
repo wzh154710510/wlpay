@@ -88,7 +88,7 @@ public class DruidDataSourceConfig implements EnvironmentAware {
         pageHelper.setProperties(props); //添加插件
         sqlSessionFactoryBean.setPlugins(new Interceptor[]{pageHelper});
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        sqlSessionFactoryBean.setMapperLocations(resolver.getResources("classpath:org/xxpay/dal/dao/mapper/*.xml"));
+        sqlSessionFactoryBean.setMapperLocations(resolver.getResources("classpath:org/wlpay/dal/dao/mapper/*.xml"));
         return sqlSessionFactoryBean.getObject();
     }
 

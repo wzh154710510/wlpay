@@ -18,10 +18,14 @@
                     <option value="ALIPAY_PC" <#if (item.channelId!"") == "ALIPAY_PC">selected="selected"</#if>>ALIPAY_PC</option>
                     <option value="ALIPAY_WAP" <#if (item.channelId!"") == "ALIPAY_WAP">selected="selected"</#if>>ALIPAY_WAP</option>
                     <option value="ALIPAY_QR" <#if (item.channelId!"") == "ALIPAY_QR">selected="selected"</#if>>ALIPAY_QR</option>
+                    
+                    <option value="ALIPAY_INDIVIDUAL" <#if (item.channelId!"") == "ALIPAY_INDIVIDUAL">selected="selected"</#if>>ALIPAY_INDIVIDUAL</option>
+                    
                     <option value="WX_APP" <#if (item.channelId!"") == "WX_APP">selected="selected"</#if>>WX_APP</option>
                     <option value="WX_JSAPI" <#if (item.channelId!"") == "WX_JSAPI">selected="selected"</#if>>WX_JSAPI</option>
                     <option value="WX_NATIVE" <#if (item.channelId!"") == "WX_NATIVE">selected="selected"</#if>>WX_NATIVE</option>
                     <option value="WX_MWEB" <#if (item.channelId!"") == "WX_MWEB">selected="selected"</#if>>WX_MWEB</option>
+                 
 				</select>
 			</div>
 		</div>

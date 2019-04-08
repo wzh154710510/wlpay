@@ -7,7 +7,7 @@
     <properties resource="generator.properties"></properties>
 
     <!-- 驱动包 -->
-    <classPathEntry location="${classPathEntry}" />
+    <classPathEntry location="C:\Users\AngkorW\.m2\repository\mysql\mysql-connector-java\5.1.41\mysql-connector-java-5.1.41.jar" />
 
     <context id="MysqlContext" targetRuntime="MyBatis3" defaultModelType="flat">
 
@@ -39,10 +39,10 @@
         </commentGenerator>
 
         <!-- 数据库连接 -->
-        <jdbcConnection driverClass="${generator.jdbc.driver}"
-                        connectionURL="${generator.jdbc.url}"
-                        userId="${generator.jdbc.username}"
-                        password="${generator.jdbc.password}"/>
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://47.106.118.9:3306/xxpaydb?useUnicode=true&amp;characterEncoding=utf-8&amp;autoReconnect=true&amp;useSSL=false"
+                        userId="root"
+                        password="root"/>
 
         <!-- model生成 -->
         <javaModelGenerator targetPackage="org.wlpay.dal.dao.model" targetProject="src/main/java"/>
@@ -52,15 +52,17 @@
 
         <!-- Mapper接口生成 -->
         <javaClientGenerator targetPackage="org.wlpay.dal.dao.mapper" targetProject="src/main/java" type="XMLMAPPER"/>
-
+        
+        
+<!--         <table tableName="t_mch_info" domainObjectName="MchInfo"><property name="useActualColumnNames" value="true" /></table>
+ -->
         <!-- 需要映射的表 -->
-        <!--<table tableName="t_pay_order" domainObjectName="PayOrder"><property name="useActualColumnNames" value="true" /></table>
+        <table tableName="t_pay_order" domainObjectName="PayOrder"><property name="useActualColumnNames" value="true" /></table>
         <table tableName="t_pay_channel" domainObjectName="PayChannel"><property name="useActualColumnNames" value="true" /></table>
         <table tableName="t_mch_info" domainObjectName="MchInfo"><property name="useActualColumnNames" value="true" /></table>
-        <table tableName="t_iap_receipt" domainObjectName="IapReceipt"><property name="useActualColumnNames" value="true" /></table>-->
-
-        <table tableName="t_trans_order" domainObjectName="TransOrder"><property name="useActualColumnNames" value="true" /></table>
+        <table tableName="t_iap_receipt" domainObjectName="IapReceipt"><property name="useActualColumnNames" value="true" /></table>
+		 <table tableName="t_trans_order" domainObjectName="TransOrder"><property name="useActualColumnNames" value="true" /></table>
         <table tableName="t_refund_order" domainObjectName="RefundOrder"><property name="useActualColumnNames" value="true" /></table>
-        <!--<table tableName="t_mch_notify" domainObjectName="MchNotify"><property name="useActualColumnNames" value="true" /></table>-->
+        <table tableName="t_mch_notify" domainObjectName="MchNotify"><property name="useActualColumnNames" value="true" /></table>
     </context>
 </generatorConfiguration>

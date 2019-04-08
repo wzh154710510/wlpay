@@ -85,6 +85,8 @@ public class PayOrderController {
                     return payOrderService.doAliPayReq(channelId, payOrder, payContext.getString("resKey"));
                 case PayConstant.PAY_CHANNEL_ALIPAY_QR :
                     return payOrderService.doAliPayReq(channelId, payOrder, payContext.getString("resKey"));
+                case PayConstant.PAY_CHANNEL_ALIPAY_INDIVIDUAL:
+                	return payOrderService.doAliPayReq(channelId, payOrder, payContext.getString("resKey"));
                 default:
                     return XXPayUtil.makeRetFail(XXPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL, "不支持的支付渠道类型[channelId="+channelId+"]", null, null));
             }

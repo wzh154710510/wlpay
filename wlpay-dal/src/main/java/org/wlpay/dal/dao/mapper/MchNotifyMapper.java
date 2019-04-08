@@ -27,6 +27,6 @@ public interface MchNotifyMapper {
     int updateByPrimaryKeySelective(MchNotify record);
 
     int updateByPrimaryKey(MchNotify record);
-
+    
     int insertSelectiveOnDuplicateKeyUpdate(MchNotify record);
 }

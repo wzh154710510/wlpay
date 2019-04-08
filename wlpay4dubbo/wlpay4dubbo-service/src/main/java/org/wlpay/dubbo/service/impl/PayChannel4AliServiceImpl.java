@@ -117,6 +117,33 @@ public class PayChannel4AliServiceImpl implements IPayChannel4AliService {
         return RpcUtil.createBizResult(baseParam, map);
     }
 
+    
+    @Override
+	public Map doAlipayIndividualReq(String jsonParam) {
+    	String logPrefix = "【支付宝个人收款支付下单】";
+        BaseParam baseParam = JsonUtil.getObjectFromJson(jsonParam, BaseParam.class);
+        Map<String, Object> bizParamMap = baseParam.getBizParamMap();
+        if (ObjectValidUtil.isInvalid(bizParamMap)) {
+            _log.warn("{}失败, {}. jsonParam={}", logPrefix, RetEnum.RET_PARAM_NOT_FOUND.getMessage(), jsonParam);
+            return RpcUtil.createFailResult(baseParam, RetEnum.RET_PARAM_NOT_FOUND);
+        }
+        JSONObject payOrderObj = baseParam.isNullValue("payOrder") ? null : JSONObject.parseObject(bizParamMap.get("payOrder").toString());
+        PayOrder payOrder = JSON.toJavaObject(payOrderObj, PayOrder.class);
+        if (ObjectValidUtil.isInvalid(payOrder)) {
+            _log.warn("{}失败, {}. jsonParam={}", logPrefix, RetEnum.RET_PARAM_INVALID.getMessage(), jsonParam);
+            return RpcUtil.createFailResult(baseParam, RetEnum.RET_PARAM_INVALID);
+        }
+        String payOrderId = payOrder.getPayOrderId();
+        String payUrl="alipays://platformapi/startapp?appId=10000011&url=http://10.0.0.89:3020/alipay?o="+payOrderId;
+        _log.info("{}生成跳转路径：payUrl={}", logPrefix, payUrl);
+        baseService4PayOrder.baseUpdateStatus4Ing(payOrderId, null);
+        _log.info("###### 商户统一下单处理完成 ######");
+        Map<String, Object> map = XXPayUtil.makeRetMap(PayConstant.RETURN_VALUE_SUCCESS, "", PayConstant.RETURN_VALUE_SUCCESS, null);
+        map.put("payOrderId", payOrderId);
+        map.put("payUrl", payUrl);
+        return RpcUtil.createBizResult(baseParam, map);
+	}
+
     @Override
     public Map doAliPayPcReq(String jsonParam) {
         String logPrefix = "【支付宝PC支付下单】";
@@ -494,4 +521,5 @@ public class PayChannel4AliServiceImpl implements IPayChannel4AliService {
         return RpcUtil.createBizResult(baseParam, map);
     }
 
+	
 }

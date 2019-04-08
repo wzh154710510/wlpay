@@ -260,6 +260,7 @@
                                 form.render();
                                 form.on('submit(edit)', function(data) {
                                     //这里可以写ajax方法提交表单
+                                    console.log("params=" + JSON.stringify(data.field));
                                     $.ajax({
                                         type: "POST",
                                         url: "/mch_info/save",

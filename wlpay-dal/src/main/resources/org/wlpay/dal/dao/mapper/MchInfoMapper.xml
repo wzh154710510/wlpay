@@ -10,6 +10,10 @@
     <result column="State" property="state" jdbcType="TINYINT" />
     <result column="CreateTime" property="createTime" jdbcType="TIMESTAMP" />
     <result column="UpdateTime" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -70,7 +74,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    MchId, Name, Type, ReqKey, ResKey, State, CreateTime, UpdateTime
+    MchId, Name, Type, ReqKey, ResKey, State, CreateTime, UpdateTime, username, password, 
+    phone, email
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="org.wlpay.dal.dao.model.MchInfoExample" >
     select
@@ -113,10 +118,14 @@
   <insert id="insert" parameterType="org.wlpay.dal.dao.model.MchInfo" >
     insert into t_mch_info (MchId, Name, Type, 
       ReqKey, ResKey, State, 
-      CreateTime, UpdateTime)
+      CreateTime, UpdateTime, username, 
+      password, phone, email
+      )
     values (#{mchId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
       #{reqKey,jdbcType=VARCHAR}, #{resKey,jdbcType=VARCHAR}, #{state,jdbcType=TINYINT}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{username,jdbcType=VARCHAR}, 
+      #{password,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="org.wlpay.dal.dao.model.MchInfo" >
     insert into t_mch_info
@@ -145,6 +154,18 @@
       <if test="updateTime != null" >
         UpdateTime,
       </if>
+      <if test="username != null" >
+        username,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="mchId != null" >
@@ -170,6 +191,18 @@
       </if>
       <if test="updateTime != null" >
         #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -206,6 +239,18 @@
       <if test="record.updateTime != null" >
         UpdateTime = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.username != null" >
+        username = #{record.username,jdbcType=VARCHAR},
+      </if>
+      <if test="record.password != null" >
+        password = #{record.password,jdbcType=VARCHAR},
+      </if>
+      <if test="record.phone != null" >
+        phone = #{record.phone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.email != null" >
+        email = #{record.email,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -220,7 +265,11 @@
       ResKey = #{record.resKey,jdbcType=VARCHAR},
       State = #{record.state,jdbcType=TINYINT},
       CreateTime = #{record.createTime,jdbcType=TIMESTAMP},
-      UpdateTime = #{record.updateTime,jdbcType=TIMESTAMP}
+      UpdateTime = #{record.updateTime,jdbcType=TIMESTAMP},
+      username = #{record.username,jdbcType=VARCHAR},
+      password = #{record.password,jdbcType=VARCHAR},
+      phone = #{record.phone,jdbcType=VARCHAR},
+      email = #{record.email,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -249,6 +298,18 @@
       <if test="updateTime != null" >
         UpdateTime = #{updateTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="username != null" >
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
     </set>
     where MchId = #{mchId,jdbcType=VARCHAR}
   </update>
@@ -260,7 +321,11 @@
       ResKey = #{resKey,jdbcType=VARCHAR},
       State = #{state,jdbcType=TINYINT},
       CreateTime = #{createTime,jdbcType=TIMESTAMP},
-      UpdateTime = #{updateTime,jdbcType=TIMESTAMP}
+      UpdateTime = #{updateTime,jdbcType=TIMESTAMP},
+      username = #{username,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR}
     where MchId = #{mchId,jdbcType=VARCHAR}
   </update>
 </mapper>

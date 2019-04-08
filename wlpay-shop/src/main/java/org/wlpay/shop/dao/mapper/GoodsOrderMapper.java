@@ -6,6 +6,7 @@ import org.wlpay.shop.dao.model.GoodsOrder;
 import org.wlpay.shop.dao.model.GoodsOrderExample;
 
 public interface GoodsOrderMapper {
+	
     int countByExample(GoodsOrderExample example);
 
     int deleteByExample(GoodsOrderExample example);

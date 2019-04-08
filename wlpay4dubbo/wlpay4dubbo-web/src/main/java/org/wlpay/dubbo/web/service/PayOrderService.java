@@ -97,6 +97,9 @@ public class PayOrderService {
             case PayConstant.PAY_CHANNEL_ALIPAY_QR :
                 result = rpcCommonService.rpcPayChannel4AliService.doAliPayQrReq(jsonParam);
                 break;
+            case PayConstant.PAY_CHANNEL_ALIPAY_INDIVIDUAL :
+            	result=rpcCommonService.rpcPayChannel4AliService.doAlipayIndividualReq(jsonParam);
+            	break;
             default:
                 result = null;
                 break;

@@ -22,6 +22,7 @@ public class PayConstant {
 	public final static String PAY_CHANNEL_ALIPAY_PC = "ALIPAY_PC";	    		// 支付宝PC支付
 	public final static String PAY_CHANNEL_ALIPAY_WAP = "ALIPAY_WAP";	    	// 支付宝WAP支付
 	public final static String PAY_CHANNEL_ALIPAY_QR = "ALIPAY_QR";	    		// 支付宝当面付之扫码支付
+	public final static String PAY_CHANNEL_ALIPAY_INDIVIDUAL = "ALIPAY_INDIVIDUAL";	    		// 支付宝个人收款
 
 	public final static String CHANNEL_NAME_WX = "WX"; 				// 渠道名称:微信
 	public final static String CHANNEL_NAME_ALIPAY = "ALIPAY"; 		// 渠道名称:支付宝
