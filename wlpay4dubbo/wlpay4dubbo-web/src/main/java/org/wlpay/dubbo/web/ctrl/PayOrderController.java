@@ -3,24 +3,40 @@ package org.wlpay.dubbo.web.ctrl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.hutool.core.codec.Base64;
+import cn.hutool.core.codec.Base64Encoder;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.extra.qrcode.QrCodeUtil;
 
+import java.net.HttpCookie;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
+import org.springframework.web.servlet.view.RedirectView;
 import org.wlpay.common.constant.PayConstant;
 import org.wlpay.common.util.MyLog;
 import org.wlpay.common.util.MySeq;
 import org.wlpay.common.util.PayDigestUtil;
+import org.wlpay.common.util.RpcUtil;
 import org.wlpay.common.util.XXPayUtil;
 import org.wlpay.dubbo.web.service.MchInfoService;
 import org.wlpay.dubbo.web.service.PayChannelService;
@@ -46,7 +62,11 @@ public class PayOrderController {
 
     @Autowired
     private MchInfoService mchInfoService;
-
+    
+    
+    @Value("${server.base.url}")
+    private String serverBaseUrl;
+    
     /**
      * 统一下单接口:
      * 1)先验证接口参数以及签名信息
@@ -108,21 +128,72 @@ public class PayOrderController {
         }
     }
     
-    
     @RequestMapping("pay/create_order")
-    public String payOrderWeb(@RequestParam String params) {
+    public String payOrderWeb(@RequestParam String params,Model model) {
     	String result=payOrder(params);
     	Map retMap = JSON.parseObject(result);
         if("SUCCESS".equals(retMap.get("retCode"))) {
             // 验签
-        	String payUrl=Objects.toString(retMap.get("payUrl"));
-        	
-        	
+        	model.addAttribute("payOrderId", retMap.get("payOrderId"));
+        	model.addAttribute("mchId", retMap.get("mchId"));
+        	return "redirect";
         }
+        model.addAttribute("message", retMap.get("retMsg"));
+    	return "error";
+    }
+    
+    @RequestMapping("pay")
+    public String pay(String o,String m,Model model) {
+    	if(StringUtils.isBlank(o)||StringUtils.isBlank(m)) {
+    		model.addAttribute("message", "系统异常");
+    		return "error";
+    	}
+    	_log.info("进入支付二维码页面 支付订单号 【PayOrderId】为,商户号【mchId】为", o,m);
+    	Map<String,Object> paramMap=new HashMap<String, Object>();
+    	paramMap.put("mchId", m);
+    	paramMap.put("payOrderId",o);
+    	_log.info("查询数据为{}", paramMap);
+    	Map<String,Object> order=payOrderService.selectPayOrder(RpcUtil.createBaseParam(paramMap));
+    	_log.info("订单数据为{}", order);
+    	model.addAttribute("orderNo", order.get("mchOrderNo"));
+    	model.addAttribute("amount", order.get("amount"));
+    	model.addAttribute("title",order.get("subject"));
+    	String aliPayRedirectUrl="alipays://platformapi/startapp?appId=10000011&url="+serverBaseUrl+"/callPay?o="+o;
+    	_log.info("跳转连接为：{}", aliPayRedirectUrl);
+    	String base64Qrcode=Base64Encoder.encode(QrCodeUtil.generatePng(aliPayRedirectUrl, 320, 320));
+    	model.addAttribute("qrcode", "data:image/jpg;base64,"+base64Qrcode);
+    	return "pay";
+    }
+
+    @RequestMapping("callpay")
+    public String callpay() {
     	return null;
     }
     
+    
+    @RequestMapping("redirect1")
+    public RedirectView redirect1(RedirectAttributes redirectAttributes) {
+    	redirectAttributes.addAttribute("path", "aaa");
+    	return new RedirectView("redirect2", true, false, false);
+    }
 
+    @RequestMapping("redirect3")
+    public String redirect3(RedirectAttributes redirectAttributes) {
+    	redirectAttributes.addFlashAttribute("path", "aaa");
+    	return "redirect:redirect2";
+    }
+
+    
+    @RequestMapping("redirect2")
+    public String redirect2(HttpSession session,RedirectAttributes attr,@ModelAttribute String path,HttpServletRequest request) {
+    	System.out.println("path="+path);
+    	System.out.println(session.getAttribute("path"));
+    	System.out.println(attr.getFlashAttributes().get("path"));
+    	System.out.println(RequestContextUtils.getInputFlashMap(request).get("path"));
+    	return "pay";
+    }
+    
+    
     /**
      * 验证创建订单请求参数,参数通过返回JSONObject对象,否则返回错误文本信息
      * @param params

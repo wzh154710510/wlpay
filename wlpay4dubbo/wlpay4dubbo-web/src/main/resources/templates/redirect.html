@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+<form id="payOrder" th:action="@{/pay}" method="post">
+	<input name="o" th:value="${payOrderId}" />
+	<input name="m" th:value="${mchId}" />
+</form>
+</body>
+
+<script
+  src="https://code.jquery.com/jquery-2.2.4.js"
+  integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+  crossorigin="anonymous"></script>
+<script type="text/javascript">
+	$(function(){
+		$("#payOrder").submit();
+	});	
+</script>
+</html>

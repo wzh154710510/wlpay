@@ -2,10 +2,14 @@ package org.wlpay.shop.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+
+import cn.hutool.core.lang.UUID;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -125,6 +129,32 @@ public class GoodsOrderController {
         int ret = goodsOrderService.update(goodsOrder);
         _log.info("修改商品订单,返回:{}", ret);
         return result+"";
+    }
+    
+    
+    @RequestMapping(value = "/pay1", method = RequestMethod.GET)
+    public String pay1(Model model) {
+    	
+    	   JSONObject paramMap = new JSONObject();
+           paramMap.put("mchId", mchId);                       // 商户ID
+           paramMap.put("mchOrderNo", UUID.randomUUID().toString().subSequence(0, 15));           // 商户订单号
+           paramMap.put("channelId", "ALIPAY_INDIVIDUAL");             // 支付渠道ID, WX_NATIVE,ALIPAY_WAP
+           paramMap.put("amount", "1000");                          // 支付金额,单位分
+           paramMap.put("currency", "cny");                    // 币种, cny-人民币
+           paramMap.put("clientIp", "114.112.124.236");        // 用户地址,IP或手机号
+           paramMap.put("device", "WEB");                      // 设备
+           paramMap.put("subject", "测试商品");
+           paramMap.put("body", "测试商品");
+           paramMap.put("notifyUrl", notifyUrl);         // 回调URL
+           paramMap.put("param1", "");                         // 扩展参数1
+           paramMap.put("param2", "");                         // 扩展参数2
+           paramMap.put("extra", "{\"productId\":\"120989823\",\"openId\":\"o2RvowBf7sOVJf8kJksUEMceaDqo\"}");  // 附加参数
+           String reqSign = PayDigestUtil.getSign(paramMap, reqKey);
+           paramMap.put("sign", reqSign);   // 签名
+           String reqData = "params=" + paramMap.toJSONString();
+           model.addAttribute("params", paramMap.toJSONString());
+           
+    	return "test";
     }
 
     private Map createPayOrder(GoodsOrder goodsOrder, Map<String, Object> params) {

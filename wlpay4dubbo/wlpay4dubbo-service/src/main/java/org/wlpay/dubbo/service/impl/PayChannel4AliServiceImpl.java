@@ -144,6 +144,7 @@ public class PayChannel4AliServiceImpl implements IPayChannel4AliService {
         Map<String, Object> map = XXPayUtil.makeRetMap(PayConstant.RETURN_VALUE_SUCCESS, "", PayConstant.RETURN_VALUE_SUCCESS, null);
         map.put("payOrderId", payOrderId);
         map.put("payUrl", payUrl);
+        map.put("mchId", payOrder.getMchId());
         PayOrder order=baseService4PayOrder.baseSelectPayOrder(payOrderId);
         map.put("expireTime", DateUtil.formatDateTime(new Date(order.getExpireTime())));
         return RpcUtil.createBizResult(baseParam, map);

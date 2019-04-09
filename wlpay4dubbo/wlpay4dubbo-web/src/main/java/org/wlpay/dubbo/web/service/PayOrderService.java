@@ -113,4 +113,10 @@ public class PayOrderService {
         return XXPayUtil.makeRetData(map, resKey);
     }
 
+	public Map<String,Object> selectPayOrder(String jsonParam) {
+		Map<String,Object> result= rpcCommonService.rpcPayOrderService.selectByMchIdAndPayOrderId(jsonParam);
+		System.out.println("result="+result);
+		return JSONObject.parseObject(result.get("bizResult").toString(), HashMap.class);
+	}
+
 }

@@ -1,5 +1,7 @@
 server:
   port: 3020
+  base:
+    url: http://127.0.0.1:3020
 
 spring:
   dubbo:
@@ -8,6 +10,23 @@ spring:
     registry:
       address: zookeeper://47.106.118.9:2181
     scan: org.wlpay.dubbo
+  thymeleaf:
+    mode: LEGACYHTML5
+    encoding: UTF-8
+    content-type: text/html
+    cache: false
+  resources:
+    chain:
+      strategy:
+        fixed:
+          enabled: true
+          paths:
+          - /**
+          version: v1.0.0
 
 logging:
   file: ./log/xxpay4dubbo-web.log
+  
+
+  
+
