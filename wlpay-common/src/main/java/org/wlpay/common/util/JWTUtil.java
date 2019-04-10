@@ -3,6 +3,7 @@ package org.wlpay.common.util;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -22,16 +23,20 @@ public class JWTUtil {
 	private static final Integer offsetMinute=30;
 	
 	public static String createJWT(String mchId) {
+		return createJWT(mchId,null);
+	}
+	
+	public static String createJWT(String mchId,Long expriceTimeStamp) {
 		Date iatDate = new Date();
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("alg", "HS256");
 		map.put("typ", "JWT");
 		String token = JWT.create().withHeader(map) 
 				.withClaim("iss", "Service") 
-				.withClaim("aud", "APP")
+				.withClaim("aud", "ALL")
 				.withClaim("mchId", null == mchId ? null : mchId.toString())
 				.withIssuedAt(iatDate) 
-				.withExpiresAt(DateUtil.offsetMinute(new Date(iatDate.getTime()), offsetMinute)) 
+				.withExpiresAt(Objects.nonNull(expriceTimeStamp)?new Date(expriceTimeStamp):DateUtil.offsetMinute(new Date(iatDate.getTime()), offsetMinute)) 
 				.sign(Algorithm.HMAC256(SECRET)); 
 		return token;
 	}
@@ -62,16 +67,15 @@ public class JWTUtil {
 	 * @param token
 	 * @return user_id
 	 */
-	public static Long getAppUID(String token) throws JWTVerificationException{
+	public static String getParam(String token) throws JWTVerificationException{
 		Map<String, Claim> claims = verifyToken(token);
 		Claim user_id_claim = claims.get("mchId");
 		if (null == user_id_claim || StringUtils.isEmpty(user_id_claim.asString())) {
 			// token 校验失败, 抛出Token验证非法异常
 			throw new JWTVerificationException("token 验证失败");
 		}
-		return Long.valueOf(user_id_claim.asString());
+		return user_id_claim.asString();
 	}
-
 
 	
 	public static void main(String[] args) {

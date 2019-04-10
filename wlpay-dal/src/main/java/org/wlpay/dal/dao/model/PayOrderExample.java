@@ -668,6 +668,76 @@ public class PayOrderExample implements Serializable {
             return (Criteria) this;
         }
 
+        public Criteria andAlipayPidIsNull() {
+            addCriterion("AlipayPid is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayPidIsNotNull() {
+            addCriterion("AlipayPid is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayPidEqualTo(String value) {
+            addCriterion("AlipayPid =", value, "alipayPid");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayPidNotEqualTo(String value) {
+            addCriterion("AlipayPid <>", value, "alipayPid");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayPidGreaterThan(String value) {
+            addCriterion("AlipayPid >", value, "alipayPid");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayPidGreaterThanOrEqualTo(String value) {
+            addCriterion("AlipayPid >=", value, "alipayPid");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayPidLessThan(String value) {
+            addCriterion("AlipayPid <", value, "alipayPid");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayPidLessThanOrEqualTo(String value) {
+            addCriterion("AlipayPid <=", value, "alipayPid");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayPidLike(String value) {
+            addCriterion("AlipayPid like", value, "alipayPid");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayPidNotLike(String value) {
+            addCriterion("AlipayPid not like", value, "alipayPid");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayPidIn(List<String> values) {
+            addCriterion("AlipayPid in", values, "alipayPid");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayPidNotIn(List<String> values) {
+            addCriterion("AlipayPid not in", values, "alipayPid");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayPidBetween(String value1, String value2) {
+            addCriterion("AlipayPid between", value1, value2, "alipayPid");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayPidNotBetween(String value1, String value2) {
+            addCriterion("AlipayPid not between", value1, value2, "alipayPid");
+            return (Criteria) this;
+        }
+
         public Criteria andDeviceIsNull() {
             addCriterion("Device is null");
             return (Criteria) this;
@@ -1795,6 +1865,66 @@ public class PayOrderExample implements Serializable {
 
         public Criteria andUpdateTimeNotBetween(Date value1, Date value2) {
             addCriterion("UpdateTime not between", value1, value2, "updateTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andRealAmountIsNull() {
+            addCriterion("RealAmount is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRealAmountIsNotNull() {
+            addCriterion("RealAmount is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRealAmountEqualTo(Long value) {
+            addCriterion("RealAmount =", value, "realAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRealAmountNotEqualTo(Long value) {
+            addCriterion("RealAmount <>", value, "realAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRealAmountGreaterThan(Long value) {
+            addCriterion("RealAmount >", value, "realAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRealAmountGreaterThanOrEqualTo(Long value) {
+            addCriterion("RealAmount >=", value, "realAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRealAmountLessThan(Long value) {
+            addCriterion("RealAmount <", value, "realAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRealAmountLessThanOrEqualTo(Long value) {
+            addCriterion("RealAmount <=", value, "realAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRealAmountIn(List<Long> values) {
+            addCriterion("RealAmount in", values, "realAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRealAmountNotIn(List<Long> values) {
+            addCriterion("RealAmount not in", values, "realAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRealAmountBetween(Long value1, Long value2) {
+            addCriterion("RealAmount between", value1, value2, "realAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRealAmountNotBetween(Long value1, Long value2) {
+            addCriterion("RealAmount not between", value1, value2, "realAmount");
             return (Criteria) this;
         }
     }

@@ -35,7 +35,19 @@ spring:
     broker-url: failover:(tcp://117.48.197.66:61616?wireFormat.maxInactivityDuration=0)
     in-memory: true
 
+secure:
+  aes:
+    key: ngbT^~!=/*)[Ybcg
+pay:
+   server:
+      url: http://pay.javanx.com/
+      
 logging:
+  level:
+    org:
+      wlpay:
+        dal:
+          dao: debug
   file: ./log/xxpay4dubbo-service.log
 
 config:

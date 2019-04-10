@@ -61,6 +61,13 @@ public class PayOrder implements Serializable {
     private String clientIp;
 
     /**
+     * 支付宝pid
+     *
+     * @mbggenerated
+     */
+    private String alipayPid;
+
+    /**
      * 设备
      *
      * @mbggenerated
@@ -179,6 +186,8 @@ public class PayOrder implements Serializable {
      */
     private Date updateTime;
 
+    private Long realAmount;
+
     private static final long serialVersionUID = 1L;
 
     public String getPayOrderId() {
@@ -243,6 +252,14 @@ public class PayOrder implements Serializable {
 
     public void setClientIp(String clientIp) {
         this.clientIp = clientIp;
+    }
+
+    public String getAlipayPid() {
+        return alipayPid;
+    }
+
+    public void setAlipayPid(String alipayPid) {
+        this.alipayPid = alipayPid;
     }
 
     public String getDevice() {
@@ -381,6 +398,14 @@ public class PayOrder implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public Long getRealAmount() {
+        return realAmount;
+    }
+
+    public void setRealAmount(Long realAmount) {
+        this.realAmount = realAmount;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -395,6 +420,7 @@ public class PayOrder implements Serializable {
         sb.append(", currency=").append(currency);
         sb.append(", status=").append(status);
         sb.append(", clientIp=").append(clientIp);
+        sb.append(", alipayPid=").append(alipayPid);
         sb.append(", device=").append(device);
         sb.append(", subject=").append(subject);
         sb.append(", body=").append(body);
@@ -412,6 +438,7 @@ public class PayOrder implements Serializable {
         sb.append(", paySuccTime=").append(paySuccTime);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
+        sb.append(", realAmount=").append(realAmount);
         sb.append("]");
         return sb.toString();
     }
@@ -436,6 +463,7 @@ public class PayOrder implements Serializable {
             && (this.getCurrency() == null ? other.getCurrency() == null : this.getCurrency().equals(other.getCurrency()))
             && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
             && (this.getClientIp() == null ? other.getClientIp() == null : this.getClientIp().equals(other.getClientIp()))
+            && (this.getAlipayPid() == null ? other.getAlipayPid() == null : this.getAlipayPid().equals(other.getAlipayPid()))
             && (this.getDevice() == null ? other.getDevice() == null : this.getDevice().equals(other.getDevice()))
             && (this.getSubject() == null ? other.getSubject() == null : this.getSubject().equals(other.getSubject()))
             && (this.getBody() == null ? other.getBody() == null : this.getBody().equals(other.getBody()))
@@ -452,7 +480,8 @@ public class PayOrder implements Serializable {
             && (this.getExpireTime() == null ? other.getExpireTime() == null : this.getExpireTime().equals(other.getExpireTime()))
             && (this.getPaySuccTime() == null ? other.getPaySuccTime() == null : this.getPaySuccTime().equals(other.getPaySuccTime()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
-            && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()));
+            && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
+            && (this.getRealAmount() == null ? other.getRealAmount() == null : this.getRealAmount().equals(other.getRealAmount()));
     }
 
     @Override
@@ -467,6 +496,7 @@ public class PayOrder implements Serializable {
         result = prime * result + ((getCurrency() == null) ? 0 : getCurrency().hashCode());
         result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
         result = prime * result + ((getClientIp() == null) ? 0 : getClientIp().hashCode());
+        result = prime * result + ((getAlipayPid() == null) ? 0 : getAlipayPid().hashCode());
         result = prime * result + ((getDevice() == null) ? 0 : getDevice().hashCode());
         result = prime * result + ((getSubject() == null) ? 0 : getSubject().hashCode());
         result = prime * result + ((getBody() == null) ? 0 : getBody().hashCode());
@@ -484,6 +514,7 @@ public class PayOrder implements Serializable {
         result = prime * result + ((getPaySuccTime() == null) ? 0 : getPaySuccTime().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
+        result = prime * result + ((getRealAmount() == null) ? 0 : getRealAmount().hashCode());
         return result;
     }
 }

@@ -35,5 +35,8 @@ public class RpcCommonService {
 
     @Reference(version = "1.0.0", timeout = 10000, retries = 0)
     public IRefundOrderService rpcRefundOrderService;
+    
+    @Reference(version = "1.0.0", timeout = 10000, retries = 0)
+    public IMchAlipayService rpcMchAlipayService;
 
 }

@@ -13,11 +13,16 @@ import com.alipay.api.response.AlipayFundTransToaccountTransferResponse;
 import com.alipay.api.response.AlipayTradeFastpayRefundQueryResponse;
 import com.alipay.api.response.AlipayTradeRefundResponse;
 
+import cn.hutool.core.codec.Base64Encoder;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.symmetric.AES;
+import cn.hutool.extra.qrcode.QrCodeUtil;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.wlpay.common.constant.PayConstant;
 import org.wlpay.common.domain.BaseParam;
 import org.wlpay.common.enumm.RetEnum;
@@ -58,6 +63,13 @@ public class PayChannel4AliServiceImpl implements IPayChannel4AliService {
 
     @Autowired
     private BaseService4RefundOrder baseService4RefundOrder;
+    
+    @Value("${pay.server.url}")
+    private String payServerUrl;
+    
+    @Value("${secure.aes.key}")
+    private String secureAesKey;
+    
 
     @Override
     public Map doAliPayWapReq(String jsonParam) {
@@ -136,20 +148,36 @@ public class PayChannel4AliServiceImpl implements IPayChannel4AliService {
             _log.warn("{}失败, {}. jsonParam={}", logPrefix, RetEnum.RET_PARAM_INVALID.getMessage(), jsonParam);
             return RpcUtil.createFailResult(baseParam, RetEnum.RET_PARAM_INVALID);
         }
+        
         String payOrderId = payOrder.getPayOrderId();
-        String payUrl="alipays://platformapi/startapp?appId=10000011&url=http://10.0.0.89:3020/alipay?o="+payOrderId;
-        _log.info("{}生成跳转路径：payUrl={}", logPrefix, payUrl);
+        String payUrl="alipays://platformapi/startapp?appId=10000011&url="+payServerUrl+"/callpay?t=";
+        
+        //先将payOrderId进行aes加密
+        String encodeKey=SecureUtil.aes(secureAesKey.getBytes()).encryptBase64(payOrderId);
+        _log.info("payOrderId={}，AES加密后的字符串为{}", payOrderId,encodeKey);
+        //然后再创建一个token
+        String token=JWTUtil.createJWT(encodeKey);
+        _log.info("TOKEN为{}", token);
+        String qrcodeUrl=payUrl+token;
+        //将qrcodeUrl 生成一张二维码
+        String qrcode=Base64Encoder.encode(QrCodeUtil.generatePng(qrcodeUrl, 320, 320));
+        //拼接上base64编码字符串
+        String base64Qrcode="data:image/png;base64,"+qrcode;
+        _log.info("{}生成跳转路径：payUrl={}", logPrefix, qrcodeUrl);
         baseService4PayOrder.baseUpdateStatus4Ing(payOrderId, null);
         _log.info("###### 商户统一下单处理完成 ######");
         Map<String, Object> map = XXPayUtil.makeRetMap(PayConstant.RETURN_VALUE_SUCCESS, "", PayConstant.RETURN_VALUE_SUCCESS, null);
         map.put("payOrderId", payOrderId);
-        map.put("payUrl", payUrl);
+        map.put("qrCode", base64Qrcode);
         map.put("mchId", payOrder.getMchId());
         PayOrder order=baseService4PayOrder.baseSelectPayOrder(payOrderId);
+        map.put("amount", order.getAmount()); //请求的订单金额
+        map.put("realAmount", order.getRealAmount()); //真实订单金额
         map.put("expireTime", DateUtil.formatDateTime(new Date(order.getExpireTime())));
         return RpcUtil.createBizResult(baseParam, map);
 	}
-
+    
+    
     @Override
     public Map doAliPayPcReq(String jsonParam) {
         String logPrefix = "【支付宝PC支付下单】";

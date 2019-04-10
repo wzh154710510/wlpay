@@ -2,13 +2,25 @@ package org.wlpay.dubbo.service.impl;
 
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSONObject;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.wlpay.common.domain.BaseParam;
 import org.wlpay.common.enumm.RetEnum;
 import org.wlpay.common.util.*;
+import org.wlpay.dal.dao.mapper.MchAlipayMapper;
+import org.wlpay.dal.dao.model.MchAlipay;
+import org.wlpay.dal.dao.model.MchAlipayExample;
 import org.wlpay.dal.dao.model.PayOrder;
+import org.wlpay.dal.dao.model.PayOrderExample;
 import org.wlpay.dubbo.api.service.IPayOrderService;
 import org.wlpay.dubbo.service.BaseService4PayOrder;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,6 +33,9 @@ public class PayOrderServiceImpl extends BaseService4PayOrder implements IPayOrd
 
     private static final MyLog _log = MyLog.getLog(PayOrderServiceImpl.class);
 
+    @Autowired
+    private MchAlipayMapper mchAlipayMapper;
+    
     @Override
     public Map create(String jsonParam) {
         BaseParam baseParam = JsonUtil.getObjectFromJson(jsonParam, BaseParam.class);
@@ -38,6 +53,50 @@ public class PayOrderServiceImpl extends BaseService4PayOrder implements IPayOrd
         if(payOrder == null) {
             _log.warn("新增支付订单失败, {}. jsonParam={}", RetEnum.RET_PARAM_INVALID.getMessage(), jsonParam);
             return RpcUtil.createFailResult(baseParam, RetEnum.RET_PARAM_INVALID);
+        }
+        MchAlipayExample mchAlipayExample=new MchAlipayExample();
+        mchAlipayExample.createCriteria().andMchIdEqualTo(payOrder.getMchId()).andStateEqualTo(1);
+        List<MchAlipay> mchAlipayList=mchAlipayMapper.selectByExample(mchAlipayExample);
+        if(CollectionUtils.isEmpty(mchAlipayList)) {
+        	_log.error("商户【{}】未配置收款账户", payOrder.getMchId());
+        	return RpcUtil.createFailResult(baseParam, RetEnum.RET_BIZ_RECEVE_ACCOUNT_NOT_EXISTS);
+        }
+        
+        PayOrderExample example=new PayOrderExample();
+        example.createCriteria().andMchIdEqualTo(payOrder.getMchId())
+        .andRealAmountEqualTo(payOrder.getRealAmount())
+        .andStatusIn(Arrays.asList((byte)1,(byte)2))
+        .andExpireTimeGreaterThan(new Date().getTime());
+        List<PayOrder> payOrderList=payOrderMapper.selectByExample(example);
+        
+        if(CollectionUtils.isNotEmpty(payOrderList)) {
+        	for(int i=0;i<mchAlipayList.size();i++) {
+        		boolean hasPid=false;
+        		for(int j=0;j<payOrderList.size();j++) {
+        			if(StringUtils.equals(mchAlipayList.get(i).getPid(), payOrderList.get(j).getAlipayPid())) {
+        				hasPid=true;
+        			}
+        		}
+        		if(!hasPid) {
+        			payOrder.setAlipayPid(mchAlipayList.get(i).getPid());
+        		}
+        	}
+        	if(StringUtils.isBlank(payOrder.getAlipayPid())) {
+        		if(Math.abs(payOrder.getRealAmount()-payOrder.getAmount())>20) {
+            		return RpcUtil.createFailResult(baseParam, RetEnum.RET_BIZ_SUPERVENE_HIGH);
+            	}
+            	if(payOrder.getRealAmount()<=payOrder.getAmount()) {
+            		payOrderObj.put("realAmount", payOrder.getRealAmount()-1);
+            	}else {
+            		payOrderObj.put("realAmount", payOrder.getRealAmount()+1);
+            	}
+            	Map<String,Object> paramMap = new HashMap<>();
+        	    paramMap.put("payOrder", payOrderObj);
+        	    String jsonParamAgain = RpcUtil.createBaseParam(paramMap);
+        		return create(jsonParamAgain);
+        	}
+        }else {
+        	payOrder.setAlipayPid(mchAlipayList.get(0).getPid());
         }
         int result = super.baseCreatePayOrder(payOrder);
         return RpcUtil.createBizResult(baseParam, result);

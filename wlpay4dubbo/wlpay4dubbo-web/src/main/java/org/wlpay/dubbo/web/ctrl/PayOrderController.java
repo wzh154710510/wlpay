@@ -1,15 +1,19 @@
 package org.wlpay.dubbo.web.ctrl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.codec.Base64Encoder;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.crypto.SecureUtil;
 import cn.hutool.extra.qrcode.QrCodeUtil;
 
+import java.math.BigDecimal;
 import java.net.HttpCookie;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -17,6 +21,7 @@ import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +38,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.RedirectView;
 import org.wlpay.common.constant.PayConstant;
+import org.wlpay.common.util.JWTUtil;
 import org.wlpay.common.util.MyLog;
 import org.wlpay.common.util.MySeq;
 import org.wlpay.common.util.PayDigestUtil;
 import org.wlpay.common.util.RpcUtil;
 import org.wlpay.common.util.XXPayUtil;
+import org.wlpay.dubbo.web.service.MchAlipayService;
 import org.wlpay.dubbo.web.service.MchInfoService;
 import org.wlpay.dubbo.web.service.PayChannelService;
 import org.wlpay.dubbo.web.service.PayOrderService;
@@ -64,8 +71,8 @@ public class PayOrderController {
     private MchInfoService mchInfoService;
     
     
-    @Value("${server.base.url}")
-    private String serverBaseUrl;
+    @Value("${secure.aes.key}")
+    private String secureAesKey;
     
     /**
      * 统一下单接口:
@@ -133,9 +140,8 @@ public class PayOrderController {
     	String result=payOrder(params);
     	Map retMap = JSON.parseObject(result);
         if("SUCCESS".equals(retMap.get("retCode"))) {
-            // 验签
         	model.addAttribute("payOrderId", retMap.get("payOrderId"));
-        	model.addAttribute("mchId", retMap.get("mchId"));
+        	model.addAttribute("qrCode", retMap.get("qrCode"));
         	return "redirect";
         }
         model.addAttribute("message", retMap.get("retMsg"));
@@ -143,54 +149,71 @@ public class PayOrderController {
     }
     
     @RequestMapping("pay")
-    public String pay(String o,String m,Model model) {
-    	if(StringUtils.isBlank(o)||StringUtils.isBlank(m)) {
+    public String pay(String o,String q,Model model,HttpServletRequest request) {
+    	if(StringUtils.isBlank(o)||StringUtils.isBlank(q)) {
     		model.addAttribute("message", "系统异常");
     		return "error";
     	}
-    	_log.info("进入支付二维码页面 支付订单号 【PayOrderId】为,商户号【mchId】为", o,m);
+    	Enumeration<String> heads=request.getHeaderNames();
+    	while(heads.hasMoreElements()) {
+    		String hName=heads.nextElement();
+    		_log.info("head={},value={}",hName,request.getHeader(hName));
+    	}
+    	_log.info("进入支付二维码页面 支付订单号 【PayOrderId】为{}", o);
     	Map<String,Object> paramMap=new HashMap<String, Object>();
-    	paramMap.put("mchId", m);
     	paramMap.put("payOrderId",o);
     	_log.info("查询数据为{}", paramMap);
+    	model.addAttribute("qrcode", q);
     	Map<String,Object> order=payOrderService.selectPayOrder(RpcUtil.createBaseParam(paramMap));
     	_log.info("订单数据为{}", order);
     	model.addAttribute("orderNo", order.get("mchOrderNo"));
-    	model.addAttribute("amount", order.get("amount"));
+    	model.addAttribute("amount", new BigDecimal(Objects.toString( order.get("realAmount"))).movePointLeft(2).setScale(2));
     	model.addAttribute("title",order.get("subject"));
-    	String aliPayRedirectUrl="alipays://platformapi/startapp?appId=10000011&url="+serverBaseUrl+"/callPay?o="+o;
-    	_log.info("跳转连接为：{}", aliPayRedirectUrl);
-    	String base64Qrcode=Base64Encoder.encode(QrCodeUtil.generatePng(aliPayRedirectUrl, 320, 320));
-    	model.addAttribute("qrcode", "data:image/jpg;base64,"+base64Qrcode);
     	return "pay";
     }
-
+    
     @RequestMapping("callpay")
-    public String callpay() {
-    	return null;
-    }
-    
-    
-    @RequestMapping("redirect1")
-    public RedirectView redirect1(RedirectAttributes redirectAttributes) {
-    	redirectAttributes.addAttribute("path", "aaa");
-    	return new RedirectView("redirect2", true, false, false);
-    }
-
-    @RequestMapping("redirect3")
-    public String redirect3(RedirectAttributes redirectAttributes) {
-    	redirectAttributes.addFlashAttribute("path", "aaa");
-    	return "redirect:redirect2";
-    }
-
-    
-    @RequestMapping("redirect2")
-    public String redirect2(HttpSession session,RedirectAttributes attr,@ModelAttribute String path,HttpServletRequest request) {
-    	System.out.println("path="+path);
-    	System.out.println(session.getAttribute("path"));
-    	System.out.println(attr.getFlashAttributes().get("path"));
-    	System.out.println(RequestContextUtils.getInputFlashMap(request).get("path"));
-    	return "pay";
+    public String callpay(String t,Model model,HttpServletRequest request) {
+    	String userAgent=request.getHeader("user-agent").toUpperCase();
+    	if(!StringUtils.contains(userAgent, "ALIPAY")) {
+    		model.addAttribute("message", "请使用支付宝APP扫码付款");
+    		return "error";
+    	}
+    	if(StringUtils.isBlank(t)) {
+    		model.addAttribute("message", "系统异常");
+    		return "error";
+    	}
+    	String aesPayOrderId="";
+    	try {
+    		aesPayOrderId=JWTUtil.getParam(t);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.addAttribute("message", "订单超时或令牌无效");
+    		return "error";
+		}
+    	String decodePayOrderId=SecureUtil.aes(secureAesKey.getBytes()).decryptStr(aesPayOrderId);
+    	_log.info("解密后的订单号id为{}", decodePayOrderId);
+    	Map<String, Object> paramMap=new HashMap<String, Object>();
+    	paramMap.put("payOrderId",decodePayOrderId);
+    	Map<String,Object> order=payOrderService.selectPayOrder(RpcUtil.createBaseParam(paramMap));
+    	String expireTimeStr=Objects.toString(order.get("expireTime"));
+    	_log.info("订单数据为{}", order);
+    	if(StringUtils.isNotBlank(expireTimeStr)) {
+    		Long expireTime=Long.parseLong(expireTimeStr);
+    		if(new Date().getTime()>expireTime) {
+    			model.addAttribute("message", "订单超时");
+        		return "error";
+    		}
+    	}
+    	String redirectUrl="alipays://platformapi/startapp?appId=20000123&actionType=scan&biz_data={\"s\": \"money\",\"u\": \""
+    			+ Objects.toString(order.get("alipayPid"))
+    			+"\",\"a\": \""
+    			+ Objects.toString(new BigDecimal(Objects.toString(order.get("realAmount"))).movePointLeft(2))
+    			+ "\",\"m\": \""
+    			+ Objects.toString(order.get("subject"))
+    			+ "\"}";
+    	model.addAttribute("redirectUrl", redirectUrl);
+    	return "realPay";
     }
     
     

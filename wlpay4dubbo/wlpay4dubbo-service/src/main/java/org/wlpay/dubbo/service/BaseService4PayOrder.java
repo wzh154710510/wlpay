@@ -20,7 +20,7 @@ import java.util.List;
 public class BaseService4PayOrder extends BaseService{
 
     @Autowired
-    private PayOrderMapper payOrderMapper;
+    protected PayOrderMapper payOrderMapper;
 
     public int baseCreatePayOrder(PayOrder payOrder) {
         return payOrderMapper.insertSelective(payOrder);

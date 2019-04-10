@@ -3,6 +3,10 @@ server:
   base:
     url: http://127.0.0.1:3020
 
+secure:
+  aes:
+    key: ngbT^~!=/*)[Ybcg
+    
 spring:
   dubbo:
     application:

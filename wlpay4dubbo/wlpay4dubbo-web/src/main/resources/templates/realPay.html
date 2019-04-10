@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>正在跳转支付......</title>
+</head>
+<body>
+<p th:text="${redirectUrl}" id="myP" style="display:none"></p>
+</body>
+<script
+  src="https://code.jquery.com/jquery-2.2.4.js"
+  integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+  crossorigin="anonymous"></script>
+<script src="https://gw.alipayobjects.com/as/g/h5-lib/alipayjsapi/3.1.1/alipayjsapi.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	function ready(callback) {
+		  // 如果jsbridge已经注入则直接调用
+		  if (window.AlipayJSBridge) {
+		    callback && callback();
+		  } else {
+		    // 如果没有注入则监听注入的事件
+		    document.addEventListener('AlipayJSBridgeReady', callback, false);
+		  }
+		}
+		ready(function() {
+			var url=$("#myP").text();
+		    AlipayJSBridge.call('pushWindow', {
+		      url: url,
+		    });
+		});
+})
+
+
+	
+</script>
+</html>

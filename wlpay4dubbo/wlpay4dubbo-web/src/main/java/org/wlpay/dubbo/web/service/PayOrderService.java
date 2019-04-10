@@ -1,5 +1,6 @@
 package org.wlpay.dubbo.web.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ public class PayOrderService {
     private RpcCommonService rpcCommonService;
 
     public int create(JSONObject payOrder) {
+    	payOrder.put("realAmount", payOrder.getLong("amount"));
         Map<String,Object> paramMap = new HashMap<>();
         paramMap.put("payOrder", payOrder);
         String jsonParam = RpcUtil.createBaseParam(paramMap);
@@ -114,7 +116,7 @@ public class PayOrderService {
     }
 
 	public Map<String,Object> selectPayOrder(String jsonParam) {
-		Map<String,Object> result= rpcCommonService.rpcPayOrderService.selectByMchIdAndPayOrderId(jsonParam);
+		Map<String,Object> result= rpcCommonService.rpcPayOrderService.select(jsonParam);
 		System.out.println("result="+result);
 		return JSONObject.parseObject(result.get("bizResult").toString(), HashMap.class);
 	}

@@ -5,10 +5,10 @@
 <title>Insert title here</title>
 </head>
 <body>
-
-<form id="payOrder" th:action="@{/pay}" method="post">
+<p>正在跳转支付页面......</p>
+<form id="payOrder" th:action="@{/pay}" method="post" type="hidden" style="display:none;">
 	<input name="o" th:value="${payOrderId}" />
-	<input name="m" th:value="${mchId}" />
+	<input name="q" th:value="${qrCode}">
 </form>
 </body>
 
