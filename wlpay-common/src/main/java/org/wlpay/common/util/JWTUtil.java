@@ -8,6 +8,7 @@ import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTCreator.Builder;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
@@ -20,8 +21,6 @@ public class JWTUtil {
 	
 	private static final String SECRET="asdigqwd%W7R4SCKGHSJDVAGV*/SVDSDG3asgdsdv(]~``osfdh]{";
 	
-	private static final Integer offsetMinute=30;
-	
 	public static String createJWT(String mchId) {
 		return createJWT(mchId,null);
 	}
@@ -31,15 +30,20 @@ public class JWTUtil {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("alg", "HS256");
 		map.put("typ", "JWT");
-		String token = JWT.create().withHeader(map) 
+		Builder tokenBuilder = JWT.create().withHeader(map) 
 				.withClaim("iss", "Service") 
 				.withClaim("aud", "ALL")
 				.withClaim("mchId", null == mchId ? null : mchId.toString())
-				.withIssuedAt(iatDate) 
-				.withExpiresAt(Objects.nonNull(expriceTimeStamp)?new Date(expriceTimeStamp):DateUtil.offsetMinute(new Date(iatDate.getTime()), offsetMinute)) 
-				.sign(Algorithm.HMAC256(SECRET)); 
+				.withIssuedAt(iatDate) ;
+		if(Objects.nonNull(expriceTimeStamp)&&expriceTimeStamp>0L) {
+			tokenBuilder.withExpiresAt(new Date(expriceTimeStamp)); 
+		}
+		String token =tokenBuilder.sign(Algorithm.HMAC256(SECRET)); 
 		return token;
 	}
+	
+	
+	
 	
 	/**
 	 * 解密Token
@@ -75,11 +79,6 @@ public class JWTUtil {
 			throw new JWTVerificationException("token 验证失败");
 		}
 		return user_id_claim.asString();
-	}
-
-	
-	public static void main(String[] args) {
-		System.out.println(createJWT("123"));
 	}
 
 }

@@ -1,12 +1,21 @@
 package org.wlpay.dubbo.web.ctrl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.wlpay.common.constant.PayConstant;
+import org.wlpay.common.domain.RespResult;
 import org.wlpay.common.util.MyLog;
 import org.wlpay.dubbo.web.service.NotifyPayService;
+
+import com.alibaba.fastjson.JSONObject;
+
+import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.asymmetric.KeyType;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +38,12 @@ public class Notify4AliPayController {
 
 	@Autowired
 	private NotifyPayService notifyPayService;
+	
+	@Value("${rsa.public.key}")
+	private String RSAPUBLICKEY;
+	
+	@Value("${rsa.private.key}")
+	private String RSAPRIVATEKEY;
 
 	/**
 	 * 支付宝移动支付后台通知响应
@@ -46,6 +61,29 @@ public class Notify4AliPayController {
 		_log.info("====== 完成接收支付宝支付回调通知 ======");
 		return notifyRes;
 	}
+	
+	@PostMapping("notify/alipay")
+	public RespResult<Object> notifyAlipay(String params) {
+		_log.info("====== 开始接收支付宝支付回调通知 ======,params={}",params);
+		if(StringUtils.isEmpty(params)) {
+			return RespResult.buildErrorMessage();
+		}
+		String rsaDecodeStr="";
+		try {
+			rsaDecodeStr=SecureUtil.rsa(RSAPRIVATEKEY, RSAPUBLICKEY).decryptStr(params, KeyType.PrivateKey);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return RespResult.buildErrorMessage();
+		}
+		
+		boolean flag=notifyPayService.doAliPayIndividualNotify(rsaDecodeStr);
+		_log.info("====== 完成接收支付宝支付回调通知 ======");
+		if(!flag) {
+			return RespResult.buildErrorMessage();
+		}
+		return RespResult.buildSuccessMessage();	
+	}
+	
 
 	public String doAliPayRes(HttpServletRequest request) throws ServletException, IOException {
 		String logPrefix = "【支付宝支付回调通知】";
@@ -71,5 +109,9 @@ public class Notify4AliPayController {
 		}
 		return notifyPayService.doAliPayNotify(params);
 	}
+	
+	
+	
+	
 	
 }

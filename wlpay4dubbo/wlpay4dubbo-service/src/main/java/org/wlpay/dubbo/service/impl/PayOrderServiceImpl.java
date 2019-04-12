@@ -65,7 +65,7 @@ public class PayOrderServiceImpl extends BaseService4PayOrder implements IPayOrd
         PayOrderExample example=new PayOrderExample();
         example.createCriteria().andMchIdEqualTo(payOrder.getMchId())
         .andRealAmountEqualTo(payOrder.getRealAmount())
-        .andStatusIn(Arrays.asList((byte)1,(byte)2))
+        .andStatusEqualTo((byte)1)
         .andExpireTimeGreaterThan(new Date().getTime());
         List<PayOrder> payOrderList=payOrderMapper.selectByExample(example);
         

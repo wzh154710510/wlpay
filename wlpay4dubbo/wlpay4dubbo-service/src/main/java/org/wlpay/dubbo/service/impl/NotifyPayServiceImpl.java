@@ -1,6 +1,7 @@
 package org.wlpay.dubbo.service.impl;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
@@ -16,16 +17,19 @@ import org.wlpay.common.constant.PayConstant;
 import org.wlpay.common.domain.BaseParam;
 import org.wlpay.common.enumm.RetEnum;
 import org.wlpay.common.util.*;
+import org.wlpay.dal.dao.model.Notification;
 import org.wlpay.dal.dao.model.PayChannel;
 import org.wlpay.dal.dao.model.PayOrder;
 import org.wlpay.dubbo.api.service.INotifyPayService;
 import org.wlpay.dubbo.service.BaseNotify4MchPay;
+import org.wlpay.dubbo.service.BaseService4PayOrder;
 import org.wlpay.dubbo.service.channel.alipay.AlipayConfig;
 import org.wlpay.dubbo.service.channel.wechat.WxPayUtil;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author: dingzhiwei
@@ -39,6 +43,9 @@ public class NotifyPayServiceImpl extends BaseNotify4MchPay implements INotifyPa
 
     @Autowired
     private AlipayConfig alipayConfig;
+    @Autowired
+    private BaseService4PayOrder baseService4PayOrder;
+    
 
     @Override
     public Map doAliPayNotify(String jsonParam) {
@@ -287,6 +294,41 @@ public class NotifyPayServiceImpl extends BaseNotify4MchPay implements INotifyPa
         payContext.put("payOrder", payOrder);
         return true;
     }
+
+	@Override
+	public Map<String, Object> doAliPayIndividualNotify(String jsonParam) {
+		String logPrefix = "【处理支付宝支付回调】";
+        _log.info("====== 开始处理支付宝支付回调通知 ======");
+        BaseParam baseParam = JsonUtil.getObjectFromJson(jsonParam, BaseParam.class);
+        Map<String, Object> bizParamMap = baseParam.getBizParamMap();
+        if (ObjectValidUtil.isInvalid(bizParamMap)) {
+            _log.warn("处理支付宝支付回调失败, {}. jsonParam={}", RetEnum.RET_PARAM_NOT_FOUND.getMessage(), jsonParam);
+            return RpcUtil.createFailResult(baseParam, RetEnum.RET_PARAM_NOT_FOUND);
+        }
+        String params = baseParam.isNullValue("params") ? null : Objects.toString(bizParamMap.get("params")) ;
+        if (ObjectValidUtil.isInvalid(params)) {
+            _log.warn("处理支付宝支付回调失败, {}. jsonParam={}", RetEnum.RET_PARAM_INVALID.getMessage(), jsonParam);
+            return RpcUtil.createFailResult(baseParam, RetEnum.RET_PARAM_INVALID);
+        }
+        Notification notification=JSONObject.parseObject(params, Notification.class);
+        String realAmount=new BigDecimal(notification.getAmount()).movePointRight(2).setScale(0).toString();
+        PayOrder payOrder=baseService4PayOrder.baseSelectByRealAmountAndMchId(notification.getMchID(),realAmount,notification.getListenerTime());
+        if(Objects.isNull(payOrder)) {
+        	  return RpcUtil.createBizResult(baseParam, PayConstant.RETURN_ALIPAY_VALUE_FAIL);
+        }
+        int updatePayOrderRows = super.baseUpdateStatus4Success(payOrder.getPayOrderId(), null);
+        if (updatePayOrderRows != 1) {
+            _log.error("{}更新支付状态失败,将payOrderId={},更新payStatus={}失败", logPrefix, payOrder.getPayOrderId(), PayConstant.PAY_STATUS_SUCCESS);
+            _log.info("{}响应给支付宝结果：{}", logPrefix, PayConstant.RETURN_ALIPAY_VALUE_FAIL);
+            return RpcUtil.createBizResult(baseParam, PayConstant.RETURN_ALIPAY_VALUE_FAIL);
+        }
+        _log.info("{}更新支付状态成功,将payOrderId={},更新payStatus={}成功", logPrefix, payOrder.getPayOrderId(), PayConstant.PAY_STATUS_SUCCESS);
+        payOrder.setStatus(PayConstant.PAY_STATUS_SUCCESS);
+        doNotify(payOrder, true);
+        _log.info("====== 完成处理支付宝支付回调通知 ======");
+        return RpcUtil.createBizResult(baseParam, PayConstant.RETURN_ALIPAY_VALUE_SUCCESS);
+      
+	}
 
 
 }

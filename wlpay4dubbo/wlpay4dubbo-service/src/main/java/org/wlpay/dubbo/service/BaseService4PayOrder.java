@@ -1,6 +1,8 @@
 package org.wlpay.dubbo.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -9,6 +11,9 @@ import org.wlpay.dal.dao.mapper.PayOrderMapper;
 import org.wlpay.dal.dao.model.PayOrder;
 import org.wlpay.dal.dao.model.PayOrderExample;
 
+import com.alibaba.fastjson.JSONObject;
+
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,6 +24,9 @@ import java.util.List;
 @Service
 public class BaseService4PayOrder extends BaseService{
 
+	private static final Logger logger =LoggerFactory.getLogger(BaseService4PayOrder.class);
+	
+	
     @Autowired
     protected PayOrderMapper payOrderMapper;
 
@@ -95,5 +103,25 @@ public class BaseService4PayOrder extends BaseService{
         newPayOrder.setPayOrderId(payOrderId);
         return payOrderMapper.updateByPrimaryKeySelective(newPayOrder);
     }
+
+	public PayOrder baseSelectByRealAmountAndMchId(String mchID, String realAmount,Date listenerTime) {
+		PayOrderExample example = new PayOrderExample();
+	    PayOrderExample.Criteria criteria = example.createCriteria();
+	    criteria.andMchIdEqualTo(mchID);
+	    criteria.andRealAmountEqualTo(Long.parseLong(realAmount));
+	    criteria.andStatusEqualTo((byte)1);
+	    criteria.andExpireTimeGreaterThanOrEqualTo(listenerTime.getTime());
+	    List<PayOrder> payOrderList = payOrderMapper.selectByExample(example);
+	    if(!CollectionUtils.isEmpty(payOrderList)) {
+	    	logger.info("匹配到订单数量为{}", payOrderList.size());
+	    	if(payOrderList.size()>1) {
+	    		logger.error("订单匹配失败");
+	    		return null;
+	    	}
+	    	logger.info("mchID={},realAmount={},listenerTime={},payorder={}",mchID,realAmount,listenerTime,JSONObject.toJSONString(payOrderList.get(0)));
+	    	return payOrderList.get(0);
+	    }
+        return null;
+	}
 
 }

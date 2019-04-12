@@ -148,15 +148,14 @@ public class PayChannel4AliServiceImpl implements IPayChannel4AliService {
             _log.warn("{}失败, {}. jsonParam={}", logPrefix, RetEnum.RET_PARAM_INVALID.getMessage(), jsonParam);
             return RpcUtil.createFailResult(baseParam, RetEnum.RET_PARAM_INVALID);
         }
-        
         String payOrderId = payOrder.getPayOrderId();
         String payUrl="alipays://platformapi/startapp?appId=10000011&url="+payServerUrl+"/callpay?t=";
-        
+        PayOrder order=baseService4PayOrder.baseSelectPayOrder(payOrderId);
         //先将payOrderId进行aes加密
         String encodeKey=SecureUtil.aes(secureAesKey.getBytes()).encryptBase64(payOrderId);
         _log.info("payOrderId={}，AES加密后的字符串为{}", payOrderId,encodeKey);
         //然后再创建一个token
-        String token=JWTUtil.createJWT(encodeKey);
+        String token=JWTUtil.createJWT(encodeKey,order.getExpireTime());
         _log.info("TOKEN为{}", token);
         String qrcodeUrl=payUrl+token;
         //将qrcodeUrl 生成一张二维码
@@ -170,7 +169,6 @@ public class PayChannel4AliServiceImpl implements IPayChannel4AliService {
         map.put("payOrderId", payOrderId);
         map.put("qrCode", base64Qrcode);
         map.put("mchId", payOrder.getMchId());
-        PayOrder order=baseService4PayOrder.baseSelectPayOrder(payOrderId);
         map.put("amount", order.getAmount()); //请求的订单金额
         map.put("realAmount", order.getRealAmount()); //真实订单金额
         map.put("expireTime", DateUtil.formatDateTime(new Date(order.getExpireTime())));

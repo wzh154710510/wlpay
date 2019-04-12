@@ -49,6 +49,7 @@ public class BaseNotify4MchPay extends BaseService4PayOrder {
 		paramMap.put("mchOrderNo", ObjectUtils.defaultIfNull(payOrder.getMchOrderNo(), ""));       	   	// 商户订单号
 		paramMap.put("channelId", ObjectUtils.defaultIfNull(payOrder.getChannelId(), ""));             	// 渠道ID
 		paramMap.put("amount", ObjectUtils.defaultIfNull(payOrder.getAmount(), ""));                   	// 支付金额
+		paramMap.put("realAmount", ObjectUtils.defaultIfNull(payOrder.getRealAmount(),""));
 		paramMap.put("currency", ObjectUtils.defaultIfNull(payOrder.getCurrency(), ""));               	// 货币类型
 		paramMap.put("status", ObjectUtils.defaultIfNull(payOrder.getStatus(), ""));               	   	// 支付状态
 		paramMap.put("clientIp", ObjectUtils.defaultIfNull(payOrder.getClientIp(), ""));   			   	// 客户端IP

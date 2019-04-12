@@ -59,7 +59,7 @@ public class RespResult<T> implements Serializable{
 	}
 	
 	public static <T>  RespResult<T> buildErrorMessage(String message) {
-		return new RespResult<T>("000000",message,null);
+		return new RespResult<T>("999999",message,null);
 	}
 	
 	

@@ -1,5 +1,6 @@
 package org.wlpay.dubbo.web.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.wlpay.common.constant.PayConstant;
@@ -39,5 +40,17 @@ public class NotifyPayService {
         Map<String, Object> result = rpcCommonService.rpcNotifyPayService.doWxPayNotify(jsonParam);
         return RpcUtil.mkRet(result);
     }
+
+	public boolean doAliPayIndividualNotify(String rsaDecodeStr) {
+		Map<String,Object> paramMap = new HashMap<>();
+	    paramMap.put("params", rsaDecodeStr);
+	    String jsonParam = RpcUtil.createBaseParam(paramMap);
+	    Map<String, Object> result = rpcCommonService.rpcNotifyPayService.doAliPayIndividualNotify(jsonParam);
+        String s = RpcUtil.mkRet(result);
+        if(s == null||StringUtils.equals("fail", s)) {
+            return false;
+        }
+        return true;
+	}
 
 }

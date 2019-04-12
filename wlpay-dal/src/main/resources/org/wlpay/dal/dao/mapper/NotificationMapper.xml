@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.wlpay.dal.dao.mapper.NotificationMapper" >
+  <resultMap id="BaseResultMap" type="org.wlpay.dal.dao.model.Notification" >
+    <id column="Id" property="id" jdbcType="INTEGER" />
+    <result column="MchID" property="mchID" jdbcType="VARCHAR" />
+    <result column="Channel" property="channel" jdbcType="VARCHAR" />
+    <result column="UserPayName" property="userPayName" jdbcType="VARCHAR" />
+    <result column="Amount" property="amount" jdbcType="VARCHAR" />
+    <result column="ListenerTime" property="listenerTime" jdbcType="TIMESTAMP" />
+    <result column="NotifiTiTle" property="notifiTiTle" jdbcType="VARCHAR" />
+    <result column="NotifiText" property="notifiText" jdbcType="VARCHAR" />
+    <result column="CreateTime" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    Id, MchID, Channel, UserPayName, Amount, ListenerTime, NotifiTiTle, NotifiText, CreateTime
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="org.wlpay.dal.dao.model.NotificationExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_notification
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limit != null" >
+      <if test="offset != null" >
+        limit ${offset}, ${limit}
+      </if>
+      <if test="offset == null" >
+        limit ${limit}
+      </if>
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_notification
+    where Id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_notification
+    where Id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="org.wlpay.dal.dao.model.NotificationExample" >
+    delete from t_notification
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="org.wlpay.dal.dao.model.Notification" >
+    insert into t_notification (Id, MchID, Channel, 
+      UserPayName, Amount, ListenerTime, 
+      NotifiTiTle, NotifiText, CreateTime
+      )
+    values (#{id,jdbcType=INTEGER}, #{mchID,jdbcType=VARCHAR}, #{channel,jdbcType=VARCHAR}, 
+      #{userPayName,jdbcType=VARCHAR}, #{amount,jdbcType=VARCHAR}, #{listenerTime,jdbcType=TIMESTAMP}, 
+      #{notifiTiTle,jdbcType=VARCHAR}, #{notifiText,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.wlpay.dal.dao.model.Notification" >
+    insert into t_notification
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        Id,
+      </if>
+      <if test="mchID != null" >
+        MchID,
+      </if>
+      <if test="channel != null" >
+        Channel,
+      </if>
+      <if test="userPayName != null" >
+        UserPayName,
+      </if>
+      <if test="amount != null" >
+        Amount,
+      </if>
+      <if test="listenerTime != null" >
+        ListenerTime,
+      </if>
+      <if test="notifiTiTle != null" >
+        NotifiTiTle,
+      </if>
+      <if test="notifiText != null" >
+        NotifiText,
+      </if>
+      <if test="createTime != null" >
+        CreateTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="mchID != null" >
+        #{mchID,jdbcType=VARCHAR},
+      </if>
+      <if test="channel != null" >
+        #{channel,jdbcType=VARCHAR},
+      </if>
+      <if test="userPayName != null" >
+        #{userPayName,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        #{amount,jdbcType=VARCHAR},
+      </if>
+      <if test="listenerTime != null" >
+        #{listenerTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="notifiTiTle != null" >
+        #{notifiTiTle,jdbcType=VARCHAR},
+      </if>
+      <if test="notifiText != null" >
+        #{notifiText,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="org.wlpay.dal.dao.model.NotificationExample" resultType="java.lang.Integer" >
+    select count(*) from t_notification
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update t_notification
+    <set >
+      <if test="record.id != null" >
+        Id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.mchID != null" >
+        MchID = #{record.mchID,jdbcType=VARCHAR},
+      </if>
+      <if test="record.channel != null" >
+        Channel = #{record.channel,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userPayName != null" >
+        UserPayName = #{record.userPayName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.amount != null" >
+        Amount = #{record.amount,jdbcType=VARCHAR},
+      </if>
+      <if test="record.listenerTime != null" >
+        ListenerTime = #{record.listenerTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.notifiTiTle != null" >
+        NotifiTiTle = #{record.notifiTiTle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.notifiText != null" >
+        NotifiText = #{record.notifiText,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        CreateTime = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update t_notification
+    set Id = #{record.id,jdbcType=INTEGER},
+      MchID = #{record.mchID,jdbcType=VARCHAR},
+      Channel = #{record.channel,jdbcType=VARCHAR},
+      UserPayName = #{record.userPayName,jdbcType=VARCHAR},
+      Amount = #{record.amount,jdbcType=VARCHAR},
+      ListenerTime = #{record.listenerTime,jdbcType=TIMESTAMP},
+      NotifiTiTle = #{record.notifiTiTle,jdbcType=VARCHAR},
+      NotifiText = #{record.notifiText,jdbcType=VARCHAR},
+      CreateTime = #{record.createTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="org.wlpay.dal.dao.model.Notification" >
+    update t_notification
+    <set >
+      <if test="mchID != null" >
+        MchID = #{mchID,jdbcType=VARCHAR},
+      </if>
+      <if test="channel != null" >
+        Channel = #{channel,jdbcType=VARCHAR},
+      </if>
+      <if test="userPayName != null" >
+        UserPayName = #{userPayName,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        Amount = #{amount,jdbcType=VARCHAR},
+      </if>
+      <if test="listenerTime != null" >
+        ListenerTime = #{listenerTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="notifiTiTle != null" >
+        NotifiTiTle = #{notifiTiTle,jdbcType=VARCHAR},
+      </if>
+      <if test="notifiText != null" >
+        NotifiText = #{notifiText,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        CreateTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where Id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.wlpay.dal.dao.model.Notification" >
+    update t_notification
+    set MchID = #{mchID,jdbcType=VARCHAR},
+      Channel = #{channel,jdbcType=VARCHAR},
+      UserPayName = #{userPayName,jdbcType=VARCHAR},
+      Amount = #{amount,jdbcType=VARCHAR},
+      ListenerTime = #{listenerTime,jdbcType=TIMESTAMP},
+      NotifiTiTle = #{notifiTiTle,jdbcType=VARCHAR},
+      NotifiText = #{notifiText,jdbcType=VARCHAR},
+      CreateTime = #{createTime,jdbcType=TIMESTAMP}
+    where Id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

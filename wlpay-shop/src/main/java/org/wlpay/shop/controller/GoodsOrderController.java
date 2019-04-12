@@ -139,7 +139,7 @@ public class GoodsOrderController {
            paramMap.put("mchId", mchId);                       // 商户ID
            paramMap.put("mchOrderNo", UUID.randomUUID().toString().subSequence(0, 15));           // 商户订单号
            paramMap.put("channelId", "ALIPAY_INDIVIDUAL");             // 支付渠道ID, WX_NATIVE,ALIPAY_WAP
-           paramMap.put("amount", "1000");                          // 支付金额,单位分
+           paramMap.put("amount", "100");                          // 支付金额,单位分
            paramMap.put("currency", "cny");                    // 币种, cny-人民币
            paramMap.put("clientIp", "114.112.124.236");        // 用户地址,IP或手机号
            paramMap.put("device", "WEB");                      // 设备

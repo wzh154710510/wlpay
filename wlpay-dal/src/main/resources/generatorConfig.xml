@@ -54,7 +54,7 @@
         <javaClientGenerator targetPackage="org.wlpay.dal.dao.mapper" targetProject="src/main/java" type="XMLMAPPER"/>
         
         
-      <table tableName="t_pay_order" domainObjectName="PayOrder"><property name="useActualColumnNames" value="true" /></table>
+      <table tableName="t_notification" domainObjectName="Notification"><property name="useActualColumnNames" value="true" /></table>
 
         <!-- 需要映射的表 -->
    <!--      <table tableName="t_pay_order" domainObjectName="PayOrder"><property name="useActualColumnNames" value="true" /></table>
