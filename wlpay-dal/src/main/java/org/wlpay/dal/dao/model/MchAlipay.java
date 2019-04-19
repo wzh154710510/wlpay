@@ -32,6 +32,13 @@ public class MchAlipay implements Serializable {
      */
     private Date createTime;
 
+    /**
+     * 标识
+     *
+     * @mbggenerated
+     */
+    private String identify;
+
     private static final long serialVersionUID = 1L;
 
     public String getPid() {
@@ -66,6 +73,14 @@ public class MchAlipay implements Serializable {
         this.createTime = createTime;
     }
 
+    public String getIdentify() {
+        return identify;
+    }
+
+    public void setIdentify(String identify) {
+        this.identify = identify;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -76,6 +91,7 @@ public class MchAlipay implements Serializable {
         sb.append(", mchId=").append(mchId);
         sb.append(", state=").append(state);
         sb.append(", createTime=").append(createTime);
+        sb.append(", identify=").append(identify);
         sb.append("]");
         return sb.toString();
     }
@@ -95,7 +111,8 @@ public class MchAlipay implements Serializable {
         return (this.getPid() == null ? other.getPid() == null : this.getPid().equals(other.getPid()))
             && (this.getMchId() == null ? other.getMchId() == null : this.getMchId().equals(other.getMchId()))
             && (this.getState() == null ? other.getState() == null : this.getState().equals(other.getState()))
-            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()));
+            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
+            && (this.getIdentify() == null ? other.getIdentify() == null : this.getIdentify().equals(other.getIdentify()));
     }
 
     @Override
@@ -106,6 +123,7 @@ public class MchAlipay implements Serializable {
         result = prime * result + ((getMchId() == null) ? 0 : getMchId().hashCode());
         result = prime * result + ((getState() == null) ? 0 : getState().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
+        result = prime * result + ((getIdentify() == null) ? 0 : getIdentify().hashCode());
         return result;
     }
 }

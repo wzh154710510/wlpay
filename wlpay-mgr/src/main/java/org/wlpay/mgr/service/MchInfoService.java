@@ -1,13 +1,18 @@
 package org.wlpay.mgr.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.wlpay.common.domain.RespResult;
 import org.wlpay.common.util.JWTUtil;
 import org.wlpay.common.vo.MchAuthentication;
+import org.wlpay.dal.dao.mapper.MchAlipayMapper;
 import org.wlpay.dal.dao.mapper.MchInfoMapper;
+import org.wlpay.dal.dao.model.MchAlipay;
+import org.wlpay.dal.dao.model.MchAlipayExample;
 import org.wlpay.dal.dao.model.MchInfo;
 import org.wlpay.dal.dao.model.MchInfoExample;
 
@@ -18,10 +23,16 @@ import java.util.List;
  */
 @Component
 public class MchInfoService {
+	
+	
+	private static final Logger logger=LoggerFactory.getLogger(MchInfoService.class);
 
     @Autowired
     private MchInfoMapper mchInfoMapper;
 
+    @Autowired
+    private MchAlipayMapper mchAlipayMapper;
+    
     public int addMchInfo(MchInfo mchInfo) {
         MchInfoExample example = new MchInfoExample();
         example.setOrderByClause("mchId DESC");
@@ -68,7 +79,7 @@ public class MchInfoService {
         }
     }
 
-	public RespResult<Object> login(String username, String password) {
+	public RespResult<Object> login(String username, String password,String alipayAccount) {
 		MchInfoExample example = new MchInfoExample();
 		example.createCriteria().andUsernameEqualTo(username).andPasswordEqualTo(password);
 		List<MchInfo> mchInfos= mchInfoMapper.selectByExample(example);
@@ -76,6 +87,13 @@ public class MchInfoService {
 			return RespResult.buildErrorMessage("登录失败，用户名或密码错误");
 		}
 		MchInfo mchInfo=mchInfos.get(0);
+		
+		MchAlipayExample alipayExample=new MchAlipayExample();
+		alipayExample.createCriteria().andMchIdEqualTo(mchInfo.getMchId()).andStateEqualTo(1).andIdentifyEqualTo(alipayAccount);
+		List<MchAlipay> alipays=mchAlipayMapper.selectByExample(alipayExample);
+		if(org.apache.commons.collections.CollectionUtils.isEmpty(alipays)) {
+			return RespResult.buildErrorMessage("收款账号不存在");
+		}
 		MchAuthentication mchAuthentication=new MchAuthentication();
 		mchAuthentication.setEmail(mchInfo.getEmail());
 		mchAuthentication.setMchId(mchInfo.getMchId());

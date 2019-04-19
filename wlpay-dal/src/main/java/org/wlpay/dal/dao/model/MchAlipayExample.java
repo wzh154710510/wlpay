@@ -387,6 +387,76 @@ public class MchAlipayExample implements Serializable {
             addCriterion("CreateTime not between", value1, value2, "createTime");
             return (Criteria) this;
         }
+
+        public Criteria andIdentifyIsNull() {
+            addCriterion("Identify is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdentifyIsNotNull() {
+            addCriterion("Identify is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdentifyEqualTo(String value) {
+            addCriterion("Identify =", value, "identify");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdentifyNotEqualTo(String value) {
+            addCriterion("Identify <>", value, "identify");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdentifyGreaterThan(String value) {
+            addCriterion("Identify >", value, "identify");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdentifyGreaterThanOrEqualTo(String value) {
+            addCriterion("Identify >=", value, "identify");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdentifyLessThan(String value) {
+            addCriterion("Identify <", value, "identify");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdentifyLessThanOrEqualTo(String value) {
+            addCriterion("Identify <=", value, "identify");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdentifyLike(String value) {
+            addCriterion("Identify like", value, "identify");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdentifyNotLike(String value) {
+            addCriterion("Identify not like", value, "identify");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdentifyIn(List<String> values) {
+            addCriterion("Identify in", values, "identify");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdentifyNotIn(List<String> values) {
+            addCriterion("Identify not in", values, "identify");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdentifyBetween(String value1, String value2) {
+            addCriterion("Identify between", value1, value2, "identify");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdentifyNotBetween(String value1, String value2) {
+            addCriterion("Identify not between", value1, value2, "identify");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria implements Serializable {

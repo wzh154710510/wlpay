@@ -84,8 +84,8 @@ public class Mq4MchNotify extends BaseService4PayOrder {
                 con.setDoInput(true);
                 con.setDoOutput(true);
                 con.setUseCaches(false);
-                con.setConnectTimeout(30 * 1000);
-                con.setReadTimeout(10 * 1000);
+                con.setConnectTimeout(6 * 1000);
+                con.setReadTimeout(6 * 1000);
                 con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()), 1024*1024);
                 while (true) {
@@ -102,8 +102,8 @@ public class Mq4MchNotify extends BaseService4PayOrder {
                 con.setDoInput(true);
                 con.setDoOutput(true);
                 con.setUseCaches(false);
-                con.setConnectTimeout(30 * 1000);
-                con.setReadTimeout(10 * 1000);
+                con.setConnectTimeout(6 * 1000);
+                con.setReadTimeout(6 * 1000);
                 con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()), 1024*1024);
                 while (true) {

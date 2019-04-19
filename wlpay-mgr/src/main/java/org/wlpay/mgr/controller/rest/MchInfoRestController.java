@@ -16,11 +16,11 @@ public class MchInfoRestController {
 	private MchInfoService mchInfoService;
 	
 	@RequestMapping("login")
-	public RespResult<Object> login(String username,String password){
-		if(Objects.isNull(username)||Objects.isNull(password)) {
+	public RespResult<Object> login(String username,String password,String alipayAccount){
+		if(Objects.isNull(username)||Objects.isNull(password)||Objects.isNull(alipayAccount)) {
 			return RespResult.buildErrorMessage("参数有误");
 		}
-		return mchInfoService.login(username,password);
+		return mchInfoService.login(username,password,alipayAccount);
 	}
 	
 }

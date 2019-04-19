@@ -727,6 +727,76 @@ public class NotificationExample implements Serializable {
             addCriterion("CreateTime not between", value1, value2, "createTime");
             return (Criteria) this;
         }
+
+        public Criteria andAlipayAccountIsNull() {
+            addCriterion("AlipayAccount is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayAccountIsNotNull() {
+            addCriterion("AlipayAccount is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayAccountEqualTo(String value) {
+            addCriterion("AlipayAccount =", value, "alipayAccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayAccountNotEqualTo(String value) {
+            addCriterion("AlipayAccount <>", value, "alipayAccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayAccountGreaterThan(String value) {
+            addCriterion("AlipayAccount >", value, "alipayAccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayAccountGreaterThanOrEqualTo(String value) {
+            addCriterion("AlipayAccount >=", value, "alipayAccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayAccountLessThan(String value) {
+            addCriterion("AlipayAccount <", value, "alipayAccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayAccountLessThanOrEqualTo(String value) {
+            addCriterion("AlipayAccount <=", value, "alipayAccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayAccountLike(String value) {
+            addCriterion("AlipayAccount like", value, "alipayAccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayAccountNotLike(String value) {
+            addCriterion("AlipayAccount not like", value, "alipayAccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayAccountIn(List<String> values) {
+            addCriterion("AlipayAccount in", values, "alipayAccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayAccountNotIn(List<String> values) {
+            addCriterion("AlipayAccount not in", values, "alipayAccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayAccountBetween(String value1, String value2) {
+            addCriterion("AlipayAccount between", value1, value2, "alipayAccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andAlipayAccountNotBetween(String value1, String value2) {
+            addCriterion("AlipayAccount not between", value1, value2, "alipayAccount");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria implements Serializable {

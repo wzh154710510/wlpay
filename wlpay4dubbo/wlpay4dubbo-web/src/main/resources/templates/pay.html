@@ -155,7 +155,7 @@
                 </p>
                 <img src="" alt="" class="dib w230px h230px qrcodeImg" />
                 <p class="mt15 fs16">过期时间:
-                    <span class="red ml5 fwb englishFont lastTime"></span>
+                    <span class="red ml5 fwb englishFont lastTime" th:text="${expireTime}"></span>
                 </p>
                 <p class="mt15 red" style="font-size:16px;">1.长按二维码图片,保存到手机</p>
                 <p class="mt10 red" style="font-size:16px;">2.打开支付宝,扫一扫“相册”二维码</p>
@@ -181,7 +181,7 @@
   src="https://code.jquery.com/jquery-2.2.4.js"
   integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
   crossorigin="anonymous"></script>
-<script>
+<script th:inline="javascript">
     window.onload = function() {
         $(".goback").click(function() {
             window.history.go(-1);
@@ -193,6 +193,31 @@
             }
             return i;
         }
+        
+        /*<![CDATA[*/
+        ctxPath = /*[[@{/}]]*/ '';
+        var orderId=/*[[${payOrderId}]]*/ '';
+        /*]]>*/
+        
+      	var url=ctxPath+"order/result";
+       
+        var timers=setInterval(function() {
+            $.ajax({
+                type: "post",
+                url: url,
+                dataType: 'json',
+                data: {"o":orderId},
+                success: function(res) {
+                    if (res.code == "000000") {
+                        if (res.detail == 2||res.detail == 3) {
+                            alert('付款成功');
+                            clearInterval(timers);
+                            window.location.href = ctxPath+"order/resultView";
+                        } 
+                    }
+                }
+            })
+        }, 1000);
 
         //判断PC端还是手机端
         var pc_type = "";
@@ -214,85 +239,10 @@
                 number = 3;
             }
         }
-
-        //变量需更改
-        var identification = "Q6V0389FXXD77RL7";
-        var price = "90000";
-        var type = "2";
-        var notify_url = "https://ppay.mmbbo.cn/index.php?s=/api/recharge/callback.html";
-        var return_url = "https://www.020zf.com/index.html";
-        var orderid = "I408231291602007";
-        var orderuid = "0";
-        var goodsname = "020zf-900元测试";
-        var key = "0b5582ca322efdbcbbb8a0aef070f622";
-
-        var dataList = {
-            "identification": identification,
-            "price": price,
-            "type": type,
-            "notify_url": notify_url,
-            "return_url": return_url,
-            "orderid": orderid,
-            "orderuid": orderuid,
-            "goodsname": goodsname,
-            "key": key,
-        };
-        
-        
-        //PC端:3   移动端:4
-        if (number == 3) {
-            if (type == 1) {
-                //微信
-                $('#PC_wechat').show();
-                $("#PC_alipay").hide();
-                $("#PC_bank").hide();
-
-            } else if (type == 2) {
-                //支付宝
-                $("#PC_alipay").show();
-                $("#PC_wechat").hide();
-                $("#PC_bank").hide();
-            } else if (type == 3) {
-                //银联
-                $("#PC_bank").show();
-                $("#PC_wechat").hide();
-                $("#PC_alipay").hide();
-            }
-        } else if (number == 4) { //移动端:4
-            //1 微信
-            if (type == 1) {
-                 var ua = navigator.userAgent.toLowerCase();
-                if(ua.match(/MicroMessenger/i) == "micromessenger"){
-                    $('#wechat_browser').show();
-                }else{
-                      $('#not_wechat').show();
-                }                            
-                $('#PC_pay').hide();
-                $('#wechatMobile').show();
-                $('#alipayMobile').hide();
-                $('#bankMobile').hide();
-
-            } else if (type == 2) {
-                //支付宝
-                $('#PC_pay').hide();
-                $('#alipayMobile').show();
-                $('#wechatMobile').hide();
-                $('#bankMobile').hide();
-
-                // $('#startupAlipay').attr('href', res.data.qrcode);
-
-                /* 在支付宝后面添加页面，需把url拼接地址进行编码处理，才可以解析 */
-                var purl = escape('https://pay.mmbbo.cn/operate.html?price=' + res.data.actual_price + '&url=' + res.data.qrcode + '');
-                var alipayUrl = 'alipays://platformapi/startapp?saId=10000007&clientVersion=3.7.0.0718&qrcode=' + purl + '';
-                $('#startupAlipay').attr('href', alipayUrl);
-            } else if (type == 3) {
-                //银联
-                $('#PC_pay').hide();
-                $('#bankMobile').show();
-                $('#alipayMobile').hide();
-                $('#wechatMobile').hide();
-            }
-        }
+     
+        //支付宝
+        $("#PC_alipay").show();
+       
   
     }
 </script>

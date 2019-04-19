@@ -22,6 +22,13 @@ public class Notification implements Serializable {
 
     private Date createTime;
 
+    /**
+     * 支付宝账户
+     *
+     * @mbggenerated
+     */
+    private String alipayAccount;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -96,6 +103,14 @@ public class Notification implements Serializable {
         this.createTime = createTime;
     }
 
+    public String getAlipayAccount() {
+        return alipayAccount;
+    }
+
+    public void setAlipayAccount(String alipayAccount) {
+        this.alipayAccount = alipayAccount;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -111,6 +126,7 @@ public class Notification implements Serializable {
         sb.append(", notifiTiTle=").append(notifiTiTle);
         sb.append(", notifiText=").append(notifiText);
         sb.append(", createTime=").append(createTime);
+        sb.append(", alipayAccount=").append(alipayAccount);
         sb.append("]");
         return sb.toString();
     }
@@ -135,7 +151,8 @@ public class Notification implements Serializable {
             && (this.getListenerTime() == null ? other.getListenerTime() == null : this.getListenerTime().equals(other.getListenerTime()))
             && (this.getNotifiTiTle() == null ? other.getNotifiTiTle() == null : this.getNotifiTiTle().equals(other.getNotifiTiTle()))
             && (this.getNotifiText() == null ? other.getNotifiText() == null : this.getNotifiText().equals(other.getNotifiText()))
-            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()));
+            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
+            && (this.getAlipayAccount() == null ? other.getAlipayAccount() == null : this.getAlipayAccount().equals(other.getAlipayAccount()));
     }
 
     @Override
@@ -151,6 +168,7 @@ public class Notification implements Serializable {
         result = prime * result + ((getNotifiTiTle() == null) ? 0 : getNotifiTiTle().hashCode());
         result = prime * result + ((getNotifiText() == null) ? 0 : getNotifiText().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
+        result = prime * result + ((getAlipayAccount() == null) ? 0 : getAlipayAccount().hashCode());
         return result;
     }
 }

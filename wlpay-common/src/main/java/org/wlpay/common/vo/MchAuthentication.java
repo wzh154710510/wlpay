@@ -38,6 +38,16 @@ public class MchAuthentication implements Serializable{
 	 * 用户手机号
 	 */
 	private String phone;
+	
+	private String identify;
+	
+	
+	public String getIdentify() {
+		return identify;
+	}
+	public void setIdentify(String identify) {
+		this.identify = identify;
+	}
 	/**
 	 * 用户邮箱
 	 */

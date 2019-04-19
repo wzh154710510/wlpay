@@ -10,6 +10,8 @@ import com.github.binarywang.wxpay.config.WxPayConfig;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -17,6 +19,9 @@ import org.wlpay.common.constant.PayConstant;
 import org.wlpay.common.domain.BaseParam;
 import org.wlpay.common.enumm.RetEnum;
 import org.wlpay.common.util.*;
+import org.wlpay.dal.dao.mapper.MchAlipayMapper;
+import org.wlpay.dal.dao.model.MchAlipay;
+import org.wlpay.dal.dao.model.MchAlipayExample;
 import org.wlpay.dal.dao.model.Notification;
 import org.wlpay.dal.dao.model.PayChannel;
 import org.wlpay.dal.dao.model.PayOrder;
@@ -28,6 +33,7 @@ import org.wlpay.dubbo.service.channel.wechat.WxPayUtil;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -45,6 +51,9 @@ public class NotifyPayServiceImpl extends BaseNotify4MchPay implements INotifyPa
     private AlipayConfig alipayConfig;
     @Autowired
     private BaseService4PayOrder baseService4PayOrder;
+    @Autowired
+    private MchAlipayMapper mchAlipayMapper;
+    
     
 
     @Override
@@ -312,7 +321,18 @@ public class NotifyPayServiceImpl extends BaseNotify4MchPay implements INotifyPa
         }
         Notification notification=JSONObject.parseObject(params, Notification.class);
         String realAmount=new BigDecimal(notification.getAmount()).movePointRight(2).setScale(0).toString();
-        PayOrder payOrder=baseService4PayOrder.baseSelectByRealAmountAndMchId(notification.getMchID(),realAmount,notification.getListenerTime());
+        
+        MchAlipayExample mchExample=new MchAlipayExample();
+        mchExample.createCriteria().andIdentifyEqualTo(notification.getAlipayAccount());
+        
+        List<MchAlipay> mchAlipayList=mchAlipayMapper.selectByExample(mchExample);
+        if (CollectionUtils.isEmpty(mchAlipayList)) {
+            _log.warn("处理支付宝支付回调失败, {}. jsonParam={}", RetEnum.RET_PARAM_INVALID.getMessage(), jsonParam);
+            return RpcUtil.createFailResult(baseParam, RetEnum.RET_PARAM_INVALID);
+        }
+        
+        MchAlipay mchAlipay=mchAlipayList.get(0);
+        PayOrder payOrder=baseService4PayOrder.baseSelectByRealAmountAndMchId(notification.getMchID(),mchAlipay.getPid(),realAmount,notification.getListenerTime());
         if(Objects.isNull(payOrder)) {
         	  return RpcUtil.createBizResult(baseParam, PayConstant.RETURN_ALIPAY_VALUE_FAIL);
         }

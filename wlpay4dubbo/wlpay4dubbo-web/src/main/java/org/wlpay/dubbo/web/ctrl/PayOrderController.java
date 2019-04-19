@@ -38,6 +38,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.RedirectView;
 import org.wlpay.common.constant.PayConstant;
+import org.wlpay.common.domain.RespResult;
 import org.wlpay.common.util.JWTUtil;
 import org.wlpay.common.util.MyLog;
 import org.wlpay.common.util.MySeq;
@@ -167,8 +168,11 @@ public class PayOrderController {
     	Map<String,Object> order=payOrderService.selectPayOrder(RpcUtil.createBaseParam(paramMap));
     	_log.info("订单数据为{}", order);
     	model.addAttribute("orderNo", order.get("mchOrderNo"));
+    	model.addAttribute("payOrderId",o);
     	model.addAttribute("amount", new BigDecimal(Objects.toString( order.get("realAmount"))).movePointLeft(2).setScale(2));
     	model.addAttribute("title",order.get("subject"));
+    	model.addAttribute("expireTime", DateUtil.date(Long.parseLong(Objects.toString(order.get("expireTime")))));
+    	model.addAttribute("expireTimeStamp", order.get("expireTime"));
     	return "pay";
     }
     
@@ -191,12 +195,14 @@ public class PayOrderController {
 			model.addAttribute("message", "订单超时或令牌无效");
     		return "error";
 		}
+    	
     	String decodePayOrderId=SecureUtil.aes(secureAesKey.getBytes()).decryptStr(aesPayOrderId);
     	_log.info("解密后的订单号id为{}", decodePayOrderId);
     	Map<String, Object> paramMap=new HashMap<String, Object>();
     	paramMap.put("payOrderId",decodePayOrderId);
     	Map<String,Object> order=payOrderService.selectPayOrder(RpcUtil.createBaseParam(paramMap));
     	String expireTimeStr=Objects.toString(order.get("expireTime"));
+    	String orderStatus=Objects.toString(order.get("status"));
     	_log.info("订单数据为{}", order);
     	if(StringUtils.isNotBlank(expireTimeStr)) {
     		Long expireTime=Long.parseLong(expireTimeStr);
@@ -205,6 +211,12 @@ public class PayOrderController {
         		return "error";
     		}
     	}
+    	
+    	if(StringUtils.equals(orderStatus, "2")||StringUtils.equals(orderStatus, "3")) {
+    		model.addAttribute("message", "不能重复支付");
+        	return "error";
+    	}
+    	
     	String redirectUrl="alipays://platformapi/startapp?appId=20000123&actionType=scan&biz_data={\"s\": \"money\",\"u\": \""
     			+ Objects.toString(order.get("alipayPid"))
     			+"\",\"a\": \""
@@ -214,6 +226,21 @@ public class PayOrderController {
     			+ "\"}";
     	model.addAttribute("redirectUrl", redirectUrl);
     	return "realPay";
+    }
+    
+    @RequestMapping("order/result")
+    @ResponseBody
+    public RespResult<Object> payResult(String o){
+    	Map<String, Object> paramMap=new HashMap<String, Object>();
+    	paramMap.put("payOrderId", o);
+    	Map<String,Object> order=payOrderService.selectPayOrder(RpcUtil.createBaseParam(paramMap));
+    	return RespResult.buildSuccessMessage(order.get("status"));
+    }
+    
+    @RequestMapping("order/resultView")
+    @ResponseBody
+    public RespResult<Object> resultView(){
+    	return RespResult.buildSuccessMessage("支付成功");
     }
     
     

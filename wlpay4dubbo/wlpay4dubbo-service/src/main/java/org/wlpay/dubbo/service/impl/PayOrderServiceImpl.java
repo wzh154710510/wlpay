@@ -85,8 +85,10 @@ public class PayOrderServiceImpl extends BaseService4PayOrder implements IPayOrd
         		if(Math.abs(payOrder.getRealAmount()-payOrder.getAmount())>20) {
             		return RpcUtil.createFailResult(baseParam, RetEnum.RET_BIZ_SUPERVENE_HIGH);
             	}
-            	if(payOrder.getRealAmount()<=payOrder.getAmount()) {
-            		payOrderObj.put("realAmount", payOrder.getRealAmount()-1);
+            	if((payOrder.getRealAmount()<=payOrder.getAmount())) {     		
+            		Long realAmountL=payOrder.getRealAmount()-1;          		
+            		realAmountL=((payOrder.getAmount()-realAmountL==20)||realAmountL<=0)?payOrder.getAmount()+1:realAmountL;           				
+            		payOrderObj.put("realAmount", realAmountL);
             	}else {
             		payOrderObj.put("realAmount", payOrder.getRealAmount()+1);
             	}

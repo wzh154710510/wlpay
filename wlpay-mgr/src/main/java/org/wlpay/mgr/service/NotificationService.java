@@ -44,6 +44,8 @@ public class NotificationService {
 		Date listenerTime=new Date(jsonObj.getLongValue("listenerTime"));
 		String notifiTiTle=jsonObj.getString("notifiTiTle");
 		String notifiText=jsonObj.getString("notifiText");
+		String alipayAccount=jsonObj.getString("alipayAccount");
+		
 		Notification notification=new Notification();
 		notification.setAmount(amount);
 		notification.setChannel(channel);
@@ -53,6 +55,8 @@ public class NotificationService {
 		notification.setNotifiText(notifiText);
 		notification.setNotifiTiTle(notifiTiTle);
 		notification.setUserPayName(userPayName);
+		notification.setAlipayAccount(alipayAccount);
+		
 		int i=basemaMapper.insertSelective(notification);
 		if(i>0) {
 			Map<String,Object> paramMap=new HashMap<String,Object>();

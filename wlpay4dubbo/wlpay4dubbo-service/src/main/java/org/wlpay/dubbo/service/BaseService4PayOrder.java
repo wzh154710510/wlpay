@@ -104,7 +104,7 @@ public class BaseService4PayOrder extends BaseService{
         return payOrderMapper.updateByPrimaryKeySelective(newPayOrder);
     }
 
-	public PayOrder baseSelectByRealAmountAndMchId(String mchID, String realAmount,Date listenerTime) {
+	public PayOrder baseSelectByRealAmountAndMchId(String mchID,String pid, String realAmount,Date listenerTime) {
 		PayOrderExample example = new PayOrderExample();
 	    PayOrderExample.Criteria criteria = example.createCriteria();
 	    criteria.andMchIdEqualTo(mchID);
